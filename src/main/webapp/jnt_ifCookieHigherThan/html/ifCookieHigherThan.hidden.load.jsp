@@ -8,8 +8,13 @@
 <jcr:nodeProperty node="${currentNode}" name="j:cookieName" var="cookieName"/>
 <jcr:nodeProperty node="${currentNode}" name="j:cookieValue" var="cookieValue"/>
 
-<c:if test="${renderContext.editMode}"><h4><fmt:message key="label.ifCookieHigherThanArea"/></h4>
+<template:addResources type="css" resources="personalization.css"/>
+
+<c:if test="${renderContext.editMode}">
+<div class="personalizationbox">
+<h4><fmt:message key="label.ifCookieHigherThanArea"/></h4>
     <p><fmt:message key="label.ifCookieHigherThan.componentDescription"/></p>
+</div>
 </c:if>
 
 <c:choose>

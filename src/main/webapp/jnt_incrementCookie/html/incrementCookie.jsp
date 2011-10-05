@@ -6,8 +6,13 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <template:addResources type="javascript" resources="jquery.min.js,jquery-ui.min.js,jquery.cookie.js,cookies.js"/>
 
-<c:if test="${renderContext.editMode}"><h4><fmt:message key="label.incrementCookieArea"/></h4>
+<template:addResources type="css" resources="personalization.css"/>
+
+<c:if test="${renderContext.editMode}">
+<div class="personalizationbox">
+	<h4><fmt:message key="label.incrementCookieArea"/></h4>
     <p><fmt:message key="label.incrementCookie.componentDescription"/></p>
+</div>
 </c:if>
 
 <script type="text/javascript">
