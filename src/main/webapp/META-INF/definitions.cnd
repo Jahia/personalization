@@ -1,0 +1,9 @@
+<jnt = 'http://www.jahia.org/jahia/nt/1.0'>
+<jmix = 'http://www.jahia.org/jahia/mix/1.0'>
+
+[jnt:incrementCookie] > jnt:content, jmix:queryContent
+ - j:cookieName (string)
+
+[jnt:ifCookieHigherThan] > jnt:contentList, jmix:queryContent
+ - j:cookieName (string)
+ - j:cookieValue (long)

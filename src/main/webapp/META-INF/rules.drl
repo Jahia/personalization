@@ -1,0 +1,19 @@
+###############################################################################
+package org.jahia.modules.rules
+
+#list any import classes here.
+import org.jahia.services.content.rules.*
+import org.jahia.services.content.*
+import javax.jcr.observation.Event
+import org.slf4j.Logger
+
+expander rules.dsl
+
+#declare any global variables here
+global User user
+global Service service
+global ImageService imageService
+global ExtractionService extractionService
+global Logger logger
+global JCRStoreProvider provider
+###############################################################################
