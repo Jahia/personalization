@@ -1,9 +1,60 @@
 <jnt = 'http://www.jahia.org/jahia/nt/1.0'>
 <jmix = 'http://www.jahia.org/jahia/mix/1.0'>
 
-[jnt:incrementCookie] > jnt:content, jmix:queryContent
+[jmix:personalizationComponents] > jmix:droppableContent mixin
+
+[jnt:incrementCookie] > jnt:content, jmix:personalizationComponents
  - j:cookieName (string)
 
-[jnt:ifCookieHigherThan] > jnt:contentList, jmix:queryContent
+[jnt:ifCookieHigherThan] > jnt:contentList, jmix:personalizationComponents
  - j:cookieName (string)
  - j:cookieValue (long)
+
+// Basic expression types
+
+[jnt:expression] > jnt:content
+
+[jnt:booleanExpression] > jnt:expression
+
+// Operator expression types
+
+[jnt:andExpression] > jnt:booleanExpression, jmix:personalizationComponents
++ left (jnt:booleanExpression)
++ right (jnt:booleanExpression)
+
+[jnt:orExpression] > jnt:booleanExpression, jmix:personalizationComponents
++ left (jnt:booleanExpression)
++ right (jnt:booleanExpression)
+
+[jnt:notExpression] > jnt:booleanExpression, jmix:personalizationComponents
++ expression (jnt:booleanExpression)
+
+[jnt:equalsExpression] > jnt:booleanExpression, jmix:personalizationComponents
++ left (jnt:expression)
++ right (jnt:expression)
+
+[jnt:smallerThanExpression] > jnt:booleanExpression, jmix:personalizationComponents
++ left (jnt:expression)
++ right (jnt:expression)
+
+[jnt:greaterThanExpression] > jnt:booleanExpression, jmix:personalizationComponents
++ left (jnt:expression)
++ right (jnt:expression)
+
+// Value expression types
+
+[jnt:numberValueExpression] > jnt:expression, jmix:personalizationComponents
+ - j:value (long)
+
+[jnt:booleanValueExpression] > jnt:booleanExpression, jmix:personalizationComponents
+ - j:value (boolean)
+
+[jnt:cookieValueExpression] > jnt:expression, jmix:personalizationComponents
+ - j:cookieName (string)
+
+// Conditional constructs
+
+[jnt:ifThenElse] > jnt:content, jmix:personalizationComponents
++ condition (jnt:booleanExpression)
++ then (jnt:content)
++ else (jnt:content)
