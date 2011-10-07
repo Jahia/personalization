@@ -49,6 +49,12 @@
 [jnt:booleanValueExpression] > jnt:booleanExpression, jmix:personalizationComponents
  - j:value (boolean)
 
+[jnt:stringValueExpression] > jnt:expression, jmix:personalizationComponents
+ - j:value (string)
+
+[jnt:countryCodeValueExpression] > jnt:expression, jmix:personalizationComponents
+ - j:value (string, choicelist[country,flag])
+
 [jnt:cookieValueExpression] > jnt:expression, jmix:personalizationComponents
  - j:cookieName (string)
 
