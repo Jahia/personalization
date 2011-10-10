@@ -3,8 +3,20 @@
 
 [jmix:personalizationComponents] > jmix:droppableContent mixin
 
+// Trackers, setters, etc...
+
 [jnt:incrementCookie] > jnt:content, jmix:personalizationComponents
  - j:cookieName (string)
+
+[jnt:setUserProperty] > jnt:content, jmix:personalizationComponents
+ - j:propertyName (string)
+ - j:propertyValue (string)
+
+[jnt:setUserLocation] > jnt:content, jmix:personalizationComponents
+ - j:propertyName (string)
+
+[jnt:incrementUserProperty] > jnt:content, jmix:personalizationComponents
+ - j:propertyName (string)
 
 // Basic expression types
 
@@ -54,9 +66,17 @@
 [jnt:cookieValueExpression] > jnt:expression, jmix:personalizationComponents
  - j:cookieName (string)
 
+[jnt:userPropertyValueExpression] > jnt:expression, jmix:personalizationComponents
+ - j:propertyName (string)
+
 // Conditional constructs
 
 [jnt:ifThenElse] > jnt:content, jmix:personalizationComponents
 + condition (jnt:booleanExpression)
 + then (jnt:content)
 + else (jnt:content)
+
+// Other expression users
+
+[jnt:eval] > jnt:content, jmix:personalizationComponents
++ expression (jnt:expression)

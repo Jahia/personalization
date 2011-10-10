@@ -10,16 +10,16 @@
         <div class="personalizationbox">
             <h4><fmt:message key="label.ifThenElse"/></h4>
                 <p><fmt:message key="label.ifThenElse.componentDescription"/></p>
-            <strong><fmt:message key="label.ifThenElse.ifCondition"/></strong>
+            <p><strong><fmt:message key="label.ifThenElse.ifCondition"/></strong></p>
             <div style="padding-left: 20px">
                 <template:module path="condition" />
                 ( = ${jahiaComponentExpression} )
             </div>
-            <strong><fmt:message key="label.ifThenElse.thenDisplay"/></strong>
+            <p><strong><fmt:message key="label.ifThenElse.thenDisplay"/></strong></p>
             <div style="padding-left: 20px">
                 <template:module path="then" />
             </div>
-            <strong><fmt:message key="label.ifThenElse.elseDisplay"/></strong>
+            <p><strong><fmt:message key="label.ifThenElse.elseDisplay"/></strong></p>
             <div style="padding-left: 20px">
                 <template:module path="else" />
             </div>

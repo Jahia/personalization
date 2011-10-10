@@ -4,8 +4,8 @@
 
 .bodywrapper .personalizationbox {
  overflow: hidden;
- background :#eaeaea url(images/targeting-overlay.png) top left;
- color:#f00;
+ background : url(images/targeting-overlay.png) top left;
  border: 3px dashed #ccc;
+ padding: 5px;
  font-weight:bold;
 }

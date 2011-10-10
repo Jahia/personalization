@@ -40,6 +40,17 @@ public class SetUserProperty extends Action {
             user = userManagerService.lookupUser(getParameter(parameters, "user"));
         }
 
-        return new ActionResult(HttpServletResponse.SC_ACCEPTED,parameters.get("userredirectpage").get(0), new JSONObject());
+        if (user == null) {
+            return new ActionResult(HttpServletResponse.SC_NOT_FOUND, null, new JSONObject());
+        }
+
+        user.setProperty(propertyName, propertyValue);
+
+        JSONObject jsonObject = new JSONObject();
+        for (String curPropertyName : user.getProperties().stringPropertyNames()) {
+            jsonObject.put(curPropertyName, user.getProperty(curPropertyName));
+        }
+
+        return new ActionResult(HttpServletResponse.SC_ACCEPTED,null, jsonObject);
     }
 }
