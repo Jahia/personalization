@@ -6,10 +6,6 @@
 [jnt:incrementCookie] > jnt:content, jmix:personalizationComponents
  - j:cookieName (string)
 
-[jnt:ifCookieHigherThan] > jnt:contentList, jmix:personalizationComponents
- - j:cookieName (string)
- - j:cookieValue (long)
-
 // Basic expression types
 
 [jnt:expression] > jnt:content

@@ -3,8 +3,9 @@
 ******************************************************************************/
 
 .bodywrapper .personalizationbox {
-	padding:5px 5px;
-	margin:0 5px ;
-	background-color:#99ccff;
-	border:1px solid #6699cc;
+ overflow: hidden;
+ background :#eaeaea url(images/targeting-overlay.png) top left;
+ color:#f00;
+ border: 3px dashed #ccc;
+ font-weight:bold;
 }
