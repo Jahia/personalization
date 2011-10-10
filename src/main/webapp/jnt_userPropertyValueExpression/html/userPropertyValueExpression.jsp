@@ -6,4 +6,4 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <jcr:nodeProperty node="${currentNode}" name="j:propertyName" var="propertyName"/>
 <c:set var="jahiaComponentExpression" value="${currentUser.properties[propertyName.string]}" scope="request" />
-<c:if test="${renderContext.editMode}">${jahiaComponentExpression}</c:if>
+<c:if test="${renderContext.editMode}">User property ${propertyName.string} = ${jahiaComponentExpression}</c:if>
