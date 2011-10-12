@@ -1,11 +1,7 @@
 package org.jahia.modules.personalization.taglib;
 
-import org.jahia.bin.ActionResult;
 import org.jahia.services.usermanager.JahiaUser;
-import org.json.JSONObject;
 import org.slf4j.Logger;
-
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * Personalization EL functions
