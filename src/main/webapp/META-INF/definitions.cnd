@@ -12,11 +12,25 @@
  - j:propertyName (string)
  - j:propertyValue (string)
 
+[jnt:incrementUserProperty] > jnt:content, jmix:personalizationComponents
+ - j:propertyName (string)
+
+[jnt:removeUserProperty] > jnt:content, jmix:personalizationComponents
+ - j:propertyName (string)
+
+[jnt:ajaxSetUserProperty] > jnt:content, jmix:personalizationComponents
+ - j:propertyName (string)
+ - j:propertyValue (string)
+
+[jnt:ajaxIncrementUserProperty] > jnt:content, jmix:personalizationComponents
+ - j:propertyName (string)
+
+[jnt:ajaxRemoveUserProperty] > jnt:content, jmix:personalizationComponents
+ - j:propertyName (string)
+
 [jnt:setUserLocation] > jnt:content, jmix:personalizationComponents
  - j:propertyName (string)
 
-[jnt:incrementUserProperty] > jnt:content, jmix:personalizationComponents
- - j:propertyName (string)
 
 // Basic expression types
 

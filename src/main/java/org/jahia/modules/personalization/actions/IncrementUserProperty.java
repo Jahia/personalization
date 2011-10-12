@@ -10,6 +10,7 @@ import org.jahia.services.render.URLResolver;
 import org.jahia.services.usermanager.JahiaUser;
 import org.jahia.services.usermanager.JahiaUserManagerService;
 import org.json.JSONObject;
+import org.slf4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,10 +18,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Basic action to set a user's property.
+ * Basic action to increment a user property
  */
-public class SetUserProperty extends Action {
+public class IncrementUserProperty extends Action {
 
+    private static Logger logger = org.slf4j.LoggerFactory.getLogger(IncrementUserProperty.class);
     private JahiaUserManagerService userManagerService;
 
     public void setUserManagerService(JahiaUserManagerService userManagerService) {
@@ -30,8 +32,8 @@ public class SetUserProperty extends Action {
     @Override
     public ActionResult doExecute(HttpServletRequest req, RenderContext renderContext, Resource resource, JCRSessionWrapper session, Map<String, List<String>> parameters, URLResolver urlResolver) throws Exception {
         String propertyName = getParameter(parameters, "propertyName");
-        String propertyValue = getParameter(parameters, "propertyValue");
-        if (StringUtils.isEmpty(propertyName) || StringUtils.isEmpty(propertyValue)) {
+
+        if (StringUtils.isEmpty(propertyName)) {
             return ActionResult.BAD_REQUEST;
         }
 
@@ -41,11 +43,25 @@ public class SetUserProperty extends Action {
             return new ActionResult(HttpServletResponse.SC_NOT_FOUND, null, new JSONObject());
         }
 
-        user.setProperty(propertyName, propertyValue);
+        String propertyValue = user.getProperty(propertyName);
+        if (propertyValue == null) {
+            propertyValue = "0";
+        }
+        Long longValue = null;
+        try {
+            longValue = new Long(propertyValue);
+            longValue += 1L;
+            propertyValue = longValue.toString();
+
+            user.setProperty(propertyName, propertyValue);
+        } catch (NumberFormatException nfe) {
+            logger.error("Invalid property value " + propertyValue + " for property " + propertyName + ", expected number. Will not modify it.");
+            return new ActionResult(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,null, new JSONObject());
+        }
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put(propertyName, propertyValue);
-
         return new ActionResult(HttpServletResponse.SC_ACCEPTED,null, jsonObject);
+
     }
 }

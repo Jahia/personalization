@@ -17,9 +17,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Basic action to set a user's property.
+ * Basic action to remove a user property
  */
-public class SetUserProperty extends Action {
+public class RemoveUserProperty extends Action {
 
     private JahiaUserManagerService userManagerService;
 
@@ -30,8 +30,8 @@ public class SetUserProperty extends Action {
     @Override
     public ActionResult doExecute(HttpServletRequest req, RenderContext renderContext, Resource resource, JCRSessionWrapper session, Map<String, List<String>> parameters, URLResolver urlResolver) throws Exception {
         String propertyName = getParameter(parameters, "propertyName");
-        String propertyValue = getParameter(parameters, "propertyValue");
-        if (StringUtils.isEmpty(propertyName) || StringUtils.isEmpty(propertyValue)) {
+
+        if (StringUtils.isEmpty(propertyName)) {
             return ActionResult.BAD_REQUEST;
         }
 
@@ -41,10 +41,14 @@ public class SetUserProperty extends Action {
             return new ActionResult(HttpServletResponse.SC_NOT_FOUND, null, new JSONObject());
         }
 
-        user.setProperty(propertyName, propertyValue);
-
+        String propertyValue = user.getProperty(propertyName);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put(propertyName, propertyValue);
+
+        boolean successful = user.removeProperty(propertyName);
+        if (!successful) {
+            return new ActionResult(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, null, jsonObject);
+        }
 
         return new ActionResult(HttpServletResponse.SC_ACCEPTED,null, jsonObject);
     }

@@ -20,6 +20,19 @@
 
     <bean class="org.jahia.modules.personalization.actions.SetUserProperty">
         <property name="name" value="setUserProperty"/>
+        <property name="requiredPermission" value="setUserProperty"/>
+        <property name="userManagerService" ref="JahiaUserManagerService"/>
+    </bean>
+
+    <bean class="org.jahia.modules.personalization.actions.IncrementUserProperty">
+        <property name="name" value="incrementUserProperty"/>
+        <property name="requiredPermission" value="incrementUserProperty"/>
+        <property name="userManagerService" ref="JahiaUserManagerService"/>
+    </bean>
+
+    <bean class="org.jahia.modules.personalization.actions.RemoveUserProperty">
+        <property name="name" value="removeUserProperty"/>
+        <property name="requiredPermission" value="removeUserProperty"/>
         <property name="userManagerService" ref="JahiaUserManagerService"/>
     </bean>
 
