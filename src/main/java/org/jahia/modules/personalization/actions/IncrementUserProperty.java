@@ -3,6 +3,7 @@ package org.jahia.modules.personalization.actions;
 import org.apache.commons.lang.StringUtils;
 import org.jahia.bin.Action;
 import org.jahia.bin.ActionResult;
+import org.jahia.modules.personalization.taglib.Functions;
 import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.render.RenderContext;
 import org.jahia.services.render.Resource;
@@ -44,18 +45,10 @@ public class IncrementUserProperty extends Action {
         }
 
         String propertyValue = user.getProperty(propertyName);
-        if (propertyValue == null) {
-            propertyValue = "0";
-        }
         Long longValue = null;
         try {
-            longValue = new Long(propertyValue);
-            longValue += 1L;
-            propertyValue = longValue.toString();
-
-            user.setProperty(propertyName, propertyValue);
+            longValue = Functions.incrementUserProperty(user, propertyName);
         } catch (NumberFormatException nfe) {
-            logger.error("Invalid property value " + propertyValue + " for property " + propertyName + ", expected number. Will not modify it.");
             return new ActionResult(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,null, new JSONObject());
         }
 

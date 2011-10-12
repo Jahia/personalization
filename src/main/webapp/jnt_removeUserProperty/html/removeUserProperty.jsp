@@ -25,16 +25,15 @@
 <c:choose>
     <c:when test="${renderContext.editMode}">
         <div class="personalizationbox">
-            <h4><fmt:message key="label.setUserProperty"/></h4>
-            <p><fmt:message key="label.setUserProperty.componentDescription"/></p>
-            <fmt:message key="label.setUserProperty.willSetPropertyToValue">
+            <h4><fmt:message key="label.removeUserProperty"/></h4>
+            <p><fmt:message key="label.removeUserProperty.componentDescription"/></p>
+            <fmt:message key="label.removeUserProperty.willRemoveProperty">
                 <fmt:param value="${propertyName.string}" />
-                <fmt:param value="${propertyValue.string}" />
             </fmt:message>
         </div>
     </c:when>
 
     <c:otherwise>
-        <c:set var="result" value="${jpfn:setUserProperty(renderContext.user, propertyName.string, propertyValue.string)}" />
+        <c:set var="result" value="${jpfn:removeUserProperty(renderContext.user, propertyName.string)}" />
     </c:otherwise>
 </c:choose>

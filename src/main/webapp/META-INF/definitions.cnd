@@ -28,10 +28,6 @@
 [jnt:ajaxRemoveUserProperty] > jnt:content, jmix:personalizationComponents
  - j:propertyName (string)
 
-[jnt:setUserLocation] > jnt:content, jmix:personalizationComponents
- - j:propertyName (string)
-
-
 // Basic expression types
 
 [jnt:expression] > jnt:content

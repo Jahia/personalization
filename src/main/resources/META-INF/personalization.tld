@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+        version="2.0">
+
+    <description>Jahia functions library</description>
+    <display-name>Jahia functions</display-name>
+    <tlib-version>6.5</tlib-version>
+    <short-name>jpfn</short-name>
+    <uri>http://www.jahia.org/tags/personalization-functions</uri>
+
+	<function>
+		<description>
+            Sets a property on a user.
+		</description>
+		<name>setUserProperty</name>
+		<function-class>org.jahia.modules.personalization.taglib.Functions</function-class>
+		<function-signature>boolean setUserProperty(org.jahia.services.usermanager.JahiaUser,java.lang.String,java.lang.String)</function-signature>
+		<example>
+			${jpfn:setUserProperty(user, 'j:email', 'johndoe@jahia.com')}
+		</example>
+	</function>
+
+    <function>
+        <description>
+            Removes a property on a user.
+        </description>
+        <name>removeUserProperty</name>
+        <function-class>org.jahia.modules.personalization.taglib.Functions</function-class>
+        <function-signature>boolean removeUserProperty(org.jahia.services.usermanager.JahiaUser,java.lang.String)</function-signature>
+        <example>
+            ${jpfn:removeUserProperty(user, 'j:email')}
+        </example>
+    </function>
+
+    <function>
+        <description>
+            Increments a numeric property on a user. If the property was never set, it will set it to 1 as the initial
+            value.
+        </description>
+        <name>incrementUserProperty</name>
+        <function-class>org.jahia.modules.personalization.taglib.Functions</function-class>
+        <function-signature>java.lang.Long incrementUserProperty(org.jahia.services.usermanager.JahiaUser,java.lang.String)</function-signature>
+        <example>
+            ${jpfn:incrementUserProperty(user, 'pagesViewed')}
+        </example>
+    </function>
+
+</taglib>
