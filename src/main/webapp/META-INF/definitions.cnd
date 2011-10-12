@@ -90,3 +90,6 @@
 
 [jnt:eval] > jnt:content, jmix:personalizationComponents
 + expression (jnt:expression)
+
+[jnt:googleMapEval] > jnt:content, jmix:personalizationComponents
++ expression (jnt:expression)
