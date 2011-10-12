@@ -48,4 +48,28 @@
         </example>
     </function>
 
+    <function>
+        <description>
+            Calculate a distance in miles between two locations using latitude/longitudes
+        </description>
+        <name>geoDistanceInMiles</name>
+        <function-class>org.jahia.modules.personalization.taglib.Functions</function-class>
+        <function-signature>double geoDistanceInMiles(double,double,double,double)</function-signature>
+        <example>
+            ${jpfn:geoDistanceInMiles(33.123123, -127.123123, 33.123123, -127.123123)}
+        </example>
+    </function>
+
+    <function>
+        <description>
+            Calculate a distance in kilometers between two locations using latitude/longitudes
+        </description>
+        <name>geoDistanceInKilometers</name>
+        <function-class>org.jahia.modules.personalization.taglib.Functions</function-class>
+        <function-signature>double geoDistanceInKilometers(double,double,double,double)</function-signature>
+        <example>
+            ${jpfn:geoDistanceInKilometers(33.123123, -127.123123, 33.123123, -127.123123)}
+        </example>
+    </function>
+
 </taglib>

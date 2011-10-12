@@ -36,4 +36,26 @@ public class Functions {
             throw nfe;
         }
     }
+
+    public static double geoDistanceInMiles(double latitude1, double longitude1, double latitude2, double longitude2) {
+        double earthRadius = 3958.75;
+        return geoDistanceWithRadius(latitude1, longitude1, latitude2, longitude2, earthRadius);
+    }
+
+    public static double geoDistanceInKilometers(double latitude1, double longitude1, double latitude2, double longitude2) {
+        double earthRadius = 6371;
+        return geoDistanceWithRadius(latitude1, longitude1, latitude2, longitude2, earthRadius);
+    }
+
+    public static double geoDistanceWithRadius(double latitude1, double longitude1, double latitude2, double longitude2, double earthRadius) {
+        double dLat = Math.toRadians(latitude2-latitude1);
+        double dLng = Math.toRadians(longitude2-longitude1);
+        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                   Math.cos(Math.toRadians(latitude1)) * Math.cos(Math.toRadians(latitude2)) *
+                   Math.sin(dLng/2) * Math.sin(dLng/2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        double dist = earthRadius * c;
+
+        return dist;
+    }
 }

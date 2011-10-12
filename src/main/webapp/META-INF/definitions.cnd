@@ -59,6 +59,12 @@
 + left (jnt:expression)
 + right (jnt:expression)
 
+// Calculation expressions
+
+[jnt:distanceInKilometersExpression] > jnt:expression, jmix:personalizationComponents
++ location1 (jnt:expression)
++ location2 (jnt:expression)
+
 // Value expression types
 
 [jnt:numberValueExpression] > jnt:expression, jmix:personalizationComponents
@@ -78,6 +84,10 @@
 
 [jnt:userPropertyValueExpression] > jnt:expression, jmix:personalizationComponents
  - j:propertyName (string)
+
+[jnt:locationValueExpression] > jnt:expression, jmix:personalizationComponents
+ - j:latitude (double)
+ - j:longitude (double)
 
 // Conditional constructs
 
