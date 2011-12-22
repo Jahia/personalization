@@ -36,4 +36,8 @@
         <property name="userManagerService" ref="JahiaUserManagerService"/>
     </bean>
 
+    <bean name="TrackingFilter" class="org.jahia.modules.personalization.tracking.TrackingFilter">
+        <property name="priority" value="90"/>
+        <property name="trackingCookieName" value="${jahiaTrackingCookieName:jahiaTrackingID}" />
+    </bean>
 </beans>
