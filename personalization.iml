@@ -25,6 +25,15 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jahia.server:jahia-impl:6.6.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jahia.server:jahia-api:6.6.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jahia.server:jahia-gwt:6.6.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jahia.configuration:deployers:2.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: commons-pool:commons-pool:1.5.7" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: xerces:xercesImpl:2.11.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.htmlparser.jericho:jericho-html:3.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.yahoo.platform.yui:yuicompressor:standalone:2.4.7" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jahia.server:jahia-taglib:6.6.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jahia.server:jahia-impl:6.6.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jahia.server:jahia-api:6.6.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.jcr:jcr:2.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-discovery:commons-discovery:0.4" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-logging:commons-logging:1.1.1" level="project" />
