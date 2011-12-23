@@ -38,8 +38,9 @@ public class ServletEventListener implements ApplicationListener {
             if (trackingData == null) {
                 return;
             }
+            // as sessions gets destroyed upon login (because we do an invalidate), we should use a ThreadLocal variable or a request attribute to keep the trackingData instance
         } else if (event instanceof JahiaContextLoaderListener.HttpSessionAttributeAddedEvent) {
-            HttpSessionBindingEvent sessionBindingEvent = ((JahiaContextLoaderListener.HttpSessionAttributeRemovedEvent)event).getHttpSessionBindingEvent();
+            HttpSessionBindingEvent sessionBindingEvent = ((JahiaContextLoaderListener.HttpSessionAttributeAddedEvent)event).getHttpSessionBindingEvent();
             if (sessionBindingEvent.getName().equals(ProcessingContext.SESSION_USER)) {
                 // seems we have a new user that is logged in, but we must still check if it is guest.
                 JahiaUser jahiaUser = (JahiaUser) sessionBindingEvent.getValue();

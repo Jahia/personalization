@@ -103,3 +103,12 @@
 
 [jnt:googleMapEval] > jnt:content, jmix:personalizationComponents
 + expression (jnt:expression)
+
+// Tracking data structures
+
+[jnt:trackingData] > nt:base, jmix:nodenameInfo, jmix:basemetadata, jmix:list, jmix:observable
+- j:clientId (string)
+- j:associatedUserKey (string)
+- j:associatedUserIdentifier (weakreference)
+- * (string) multiple
++ * (nt:base)

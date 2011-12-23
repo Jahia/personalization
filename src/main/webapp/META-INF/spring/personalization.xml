@@ -21,10 +21,15 @@
         <property name="userManagerService" ref="JahiaUserManagerService"/>
     </bean>
 
+    <bean name="TrackingService" class="org.jahia.modules.personalization.tracking.TrackingService">
+
+    </bean>
+
     <bean name="TrackingFilter" class="org.jahia.modules.personalization.tracking.TrackingFilter">
-        <property name="priority" value="90"/>
+        <property name="priority" value="0"/>
         <property name="trackingCookieName" value="${jahiaTrackingCookieName:jahiaTrackingID}" />
         <property name="trackingSessionName" value="${jahiaTrackingSessionName:org.jahia.modules.personalization.trackingData}"/>
+        <property name="trackingService" ref="TrackingService" />
     </bean>
 
     <bean class="org.jahia.modules.personalization.tracking.ServletEventListener">
