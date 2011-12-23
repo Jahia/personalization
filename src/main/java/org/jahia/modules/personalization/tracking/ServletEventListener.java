@@ -28,7 +28,10 @@ public class ServletEventListener implements ApplicationListener {
 
     public void onApplicationEvent(ApplicationEvent event) {
 
-        if (event instanceof JahiaContextLoaderListener.HttpSessionDestroyedEvent) {
+        if (event instanceof JahiaContextLoaderListener.HttpSessionCreatedEvent) {
+            JahiaContextLoaderListener.HttpSessionCreatedEvent sessionCreatedEvent = (JahiaContextLoaderListener.HttpSessionCreatedEvent) event;
+
+        } else if (event instanceof JahiaContextLoaderListener.HttpSessionDestroyedEvent) {
             // schedule background job to store or update the TrackingData
             JahiaContextLoaderListener.HttpSessionDestroyedEvent sessionDestroyedEvent = (JahiaContextLoaderListener.HttpSessionDestroyedEvent) event;
             TrackingData trackingData = (TrackingData) sessionDestroyedEvent.getSession().getAttribute(trackingFilter.getTrackingSessionName());

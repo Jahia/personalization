@@ -50,7 +50,12 @@ public class TrackingFilter extends AbstractFilter {
                     // we have found the cookie, we must lookup the tracking data in the persistent storage.
                     String trackingID = cookie.getValue();
                     // trackingData = TrackingService.getById(trackingID);
+                    break;
                 }
+            }
+            if (trackingData == null) {
+                // tracking data was not found using a cookie, this probably means that we need to create a new one
+                trackingData = new TrackingData();
             }
         }
 
