@@ -3,21 +3,6 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
-    <bean id="nameGenerationHelperSetup" class="org.jahia.services.content.NameGenerationHelperSetup">
-        <property name="jcrContentUtils" ref="JCRContentUtils" />
-        <property name="nameGenerationHelper">
-            <bean id="defaultNameGenerationHelper" class="org.jahia.services.content.AlternateNameGenerationHelperImpl">
-                <property name="randomizedNames">
-                    <set value-type="java.lang.String">
-                        <value>jnt:absoluteArea</value>
-                        <value>jnt:levelAbsoluteArea</value>
-                        <value>jnt:area</value>
-                    </set>
-                </property>
-            </bean>
-        </property>
-    </bean>
-
     <bean class="org.jahia.modules.personalization.actions.SetUserProperty">
         <property name="name" value="setUserProperty"/>
         <property name="requiredPermission" value="setUserProperty"/>
@@ -40,4 +25,5 @@
         <property name="priority" value="90"/>
         <property name="trackingCookieName" value="${jahiaTrackingCookieName:jahiaTrackingID}" />
     </bean>
+
 </beans>

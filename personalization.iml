@@ -23,23 +23,22 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jahia.server:jahia-impl:6.5.1.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jahia.server:jahia-api:6.5.1.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jahia.server:jahia-impl:6.6.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jahia.server:jahia-api:6.6.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.jcr:jcr:2.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-discovery:commons-discovery:0.4" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-logging:commons-logging:1.1.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-id:commons-id:0.1-dev" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jahia.server:jahia-gwt:6.5.1.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jahia.server:jahia-gwt:6.6.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.extjs:gxt:2.2.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.code.gwt-log:gwt-log:3.1.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jahia.configuration:deployers:2.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jahia.configuration:deployers:2.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-io:commons-io:2.0.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: junit:junit:4.8.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-beanutils:commons-beanutils:1.8.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-codec:commons-codec:1.4" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-collections:commons-collections:3.2.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-dbcp:commons-dbcp:1.3" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: commons-pool:commons-pool:1.5.6" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: commons-pool:commons-pool:1.5.7" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-digester:commons-digester:1.8.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-fileupload:commons-fileupload:1.2.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-httpclient:commons-httpclient:3.1" level="project" />
@@ -58,8 +57,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.antlr:antlr-runtime:3.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.eclipse.jdt:core:3.2.3.v_686_R32x" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: janino:janino:2.5.10" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: xml-apis:xml-apis:1.0.b2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: xerces:xercesImpl:2.4.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: xerces:xercesImpl:2.11.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.lucene:lucene-core:2.4.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.lucene:lucene-snowball:2.4.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.lucene:lucene-analyzers:2.4.1" level="project" />
@@ -173,7 +171,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.james:apache-mime4j:0.6" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.sf.ehcache:ehcache-core:2.3.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.gwt:gwt-servlet:2.2.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: net.htmlparser.jericho:jericho-html:3.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.htmlparser.jericho:jericho-html:3.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.thoughtworks.xstream:xstream:1.3.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: xpp3:xpp3_min:1.1.4c" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: rome:rome-fetcher:1.0" level="project" />
@@ -204,13 +202,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.openoffice:jurt:3.1.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.openoffice:ridl:3.1.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.openoffice:unoil:3.1.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.gdata:gdata-client:1.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.gdata:gdata-client-meta:1.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.gdata:gdata-core:1.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.gdata:gdata-media:1.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.guava:guava:r06" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.gdata:gdata-docs:3.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.gdata:gdata-docs-meta:3.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.shiro:shiro-core:1.1.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.shiro:shiro-spring:1.1.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.shiro:shiro-web:1.1.0" level="project" />
@@ -232,7 +224,8 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.sourceforge.nekohtml:nekohtml:1.9.14" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jasypt:jasypt:lite:1.7" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.tuckey:urlrewritefilter:3.2.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jahia.server:jahia-taglib:6.5.1.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.yahoo.platform.yui:yuicompressor:standalone:2.4.7" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jahia.server:jahia-taglib:6.6.0.0-SNAPSHOT" level="project" />
   </component>
 </module>
 
