@@ -1,5 +1,6 @@
 package org.jahia.modules.personalization.tracking;
 
+import org.jahia.modules.personalization.tracking.trackers.TrackerInterface;
 import org.jahia.services.render.RenderContext;
 import org.jahia.services.render.Resource;
 import org.jahia.services.render.filter.AbstractFilter;
@@ -20,6 +21,8 @@ public class TrackingFilter extends AbstractFilter {
 
     private TrackingService trackingService;
 
+    private List<TrackerInterface> trackers = new ArrayList<TrackerInterface>();
+
     public String getTrackingCookieName() {
         return trackingCookieName;
     }
@@ -38,6 +41,10 @@ public class TrackingFilter extends AbstractFilter {
 
     public void setTrackingService(TrackingService trackingService) {
         this.trackingService = trackingService;
+    }
+
+    public void setTrackers(List<TrackerInterface> trackers) {
+        this.trackers = trackers;
     }
 
     @Override
@@ -72,43 +79,12 @@ public class TrackingFilter extends AbstractFilter {
             }
         }
 
-        if (renderContext.isLiveMode()) {
-            Long lastPostMethodTime = trackingData.getLong("lastPostMethodTime");
-            long now = System.currentTimeMillis();
-            if (lastPostMethodTime != null) {
-                // let's check for spam activity
-                long elapsedTime = now - lastPostMethodTime;
-            }
-
-            if (renderContext.getRequest().getMethod().toLowerCase().equals("post")) {
-                trackingData.setLong("lastPostMethodTime", now);
+        // now let's call all the trackers to update the trackingData structure.
+        for (TrackerInterface tracker : trackers) {
+            if (!tracker.track(renderContext, resource, chain, trackingData)) {
+                break;
             }
         }
-
-        StringBuilder fullUrl = new StringBuilder(renderContext.getRequest().getRequestURI());
-        if (renderContext.getRequest().getQueryString() != null) {
-            fullUrl.append("?");
-            fullUrl.append(renderContext.getRequest().getQueryString());
-        }
-        if (renderContext.getRequest().getHeader("Referer") != null) {
-            fullUrl.append(":" + renderContext.getRequest().getHeader("Referer"));
-        }
-        trackingData.addStringToSet("urls", fullUrl.toString());
-
-        trackingData.addStringToSet("ips", renderContext.getRequest().getRemoteAddr());
-        trackingData.addStringToSet("hosts", renderContext.getRequest().getRemoteHost());
-
-        if (renderContext.getRequest().getHeader("User-Agent") != null) {
-            trackingData.addStringToSet("user-agents", renderContext.getRequest().getHeader("User-Agent"));
-        }
-
-        Enumeration<Locale> localeEnumeration = renderContext.getRequest().getLocales();
-        while (localeEnumeration.hasMoreElements()) {
-            Locale locale = localeEnumeration.nextElement();
-            trackingData.addStringToSet("locales", locale.toString());
-        }
-
-        trackingData.addStringToSet("resources", renderContext.getMainResource().getNode().getPath());
 
         session.setAttribute(trackingSessionName, trackingData);
         renderContext.getRequest().setAttribute(trackingSessionName, trackingData);

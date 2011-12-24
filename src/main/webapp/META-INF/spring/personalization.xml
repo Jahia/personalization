@@ -30,6 +30,15 @@
         <property name="trackingCookieName" value="${jahiaTrackingCookieName:jahiaTrackingID}" />
         <property name="trackingSessionName" value="${jahiaTrackingSessionName:org.jahia.modules.personalization.trackingData}"/>
         <property name="trackingService" ref="TrackingService" />
+        <property name="trackers">
+            <list>
+                <bean class="org.jahia.modules.personalization.tracking.trackers.SpamPostLimiterTracker" />
+                <bean class="org.jahia.modules.personalization.tracking.trackers.UrlAndRefererTracker" />
+                <bean class="org.jahia.modules.personalization.tracking.trackers.HostAndIpAddressTracker" />
+                <bean class="org.jahia.modules.personalization.tracking.trackers.UserAgentTracker" />
+                <bean class="org.jahia.modules.personalization.tracking.trackers.LocalesTracker" />
+            </list>
+        </property>
     </bean>
 
     <bean class="org.jahia.modules.personalization.tracking.ServletEventListener">
