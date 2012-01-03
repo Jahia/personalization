@@ -23,6 +23,8 @@ public class TrackingFilter extends AbstractFilter {
 
     private List<TrackerInterface> trackers = new ArrayList<TrackerInterface>();
 
+    private ThreadLocal<TrackingData> trackingDataThreadLocal = new ThreadLocal<TrackingData>();
+
     public String getTrackingCookieName() {
         return trackingCookieName;
     }
@@ -89,11 +91,37 @@ public class TrackingFilter extends AbstractFilter {
         session.setAttribute(trackingSessionName, trackingData);
         renderContext.getRequest().setAttribute(trackingSessionName, trackingData);
 
+        trackingDataThreadLocal.set(trackingData);
+
         return super.prepare(renderContext, resource, chain);    //To change body of overridden methods use File | Settings | File Templates.
     }
 
     @Override
     public String execute(String previousOut, RenderContext renderContext, Resource resource, RenderChain chain) throws Exception {
         return super.execute(previousOut, renderContext, resource, chain);
+
+    }
+
+    @Override
+    public void finalize(RenderContext renderContext, Resource resource, RenderChain renderChain) {
+        super.finalize(renderContext, resource, renderChain);
+        HttpSession session = renderContext.getRequest().getSession(false);
+                if (session == null) {
+                    // if no session is present, we don't do anything...
+                    return;
+                }
+        try {
+        TrackingData trackingData = (TrackingData) session.getAttribute(trackingSessionName);
+        if (trackingData == null) {
+            // tracking data was probably removed because of a session.invalidate call, let's put it back.
+            trackingData = trackingDataThreadLocal.get();
+            if (trackingData != null) {
+                session.setAttribute(trackingSessionName, trackingData);
+            }
+        }
+        } catch (IllegalStateException ise) {
+            // we have an invalid session, cannot do anything with it.
+        }
+        trackingDataThreadLocal.set(null);
     }
 }
