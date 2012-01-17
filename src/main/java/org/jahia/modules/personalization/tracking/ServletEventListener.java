@@ -57,7 +57,10 @@ public class ServletEventListener implements ApplicationListener {
                     // we have detected a non-guest user, we must associate the tracking data with the user.
                     TrackingData trackingData = (TrackingData) sessionBindingEvent.getSession().getAttribute(trackingFilter.getTrackingSessionName());
                     if (trackingData == null) {
-                        return;
+                        trackingData = trackingFilter.getThreadLocalTrackingData();
+                        if (trackingData == null) {
+                            return;
+                        }
                     }
                     trackingData.setAssociatedUserKey(jahiaUser.getUserKey());
                     // ideally we should also load tracking data in the user profile and merge with the current tracking data.
@@ -78,6 +81,20 @@ public class ServletEventListener implements ApplicationListener {
                     scheduleJob(trackingData);
                 }
 
+            }
+        } else if (event instanceof JahiaContextLoaderListener.HttpSessionAttributeReplacedEvent) {
+            HttpSessionBindingEvent sessionBindingEvent = ((JahiaContextLoaderListener.HttpSessionAttributeReplacedEvent)event).getHttpSessionBindingEvent();
+            if (sessionBindingEvent.getName().equals(ProcessingContext.SESSION_USER)) {
+                // seems we have a new user that is logged out, but we must still check if it is guest.
+                JahiaUser jahiaUser = (JahiaUser) sessionBindingEvent.getValue();
+                if (!jahiaUser.getUsername().equals(JahiaUserManagerService.GUEST_USERNAME)) {
+                    // we have detected a non-guest user, we must schedule schedule background storage
+                    TrackingData trackingData = (TrackingData) sessionBindingEvent.getSession().getAttribute(trackingFilter.getTrackingSessionName());
+                    if (trackingData == null) {
+                        return;
+                    }
+                    scheduleJob(trackingData);
+                }
             }
         }
 
