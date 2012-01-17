@@ -25,12 +25,16 @@ public class TrackingService {
                 public TrackingData doInJCR(JCRSessionWrapper session) throws RepositoryException {
                     String[] trackingIdParts = TrackingHelper.getInstance().getClientIDParts(trackingClientId);
                     JCRNodeWrapper trackingRootNode = getTrackingRootNode(session);
-                    JCRNodeWrapper trackingNode = trackingRootNode;
-                    for (String trackingIdPart : trackingIdParts) {
-                        trackingNode = trackingNode.getNode(trackingIdPart);
+                    try {
+                        JCRNodeWrapper trackingNode = trackingRootNode;
+                        for (String trackingIdPart : trackingIdParts) {
+                            trackingNode = trackingNode.getNode(trackingIdPart);
+                        }
+                        // @todo normally we should also now retrieve and merge user tracking data if it is associated.
+                        return new TrackingData(trackingNode);
+                    } catch (PathNotFoundException pnfe) {
+                        return null;
                     }
-                    // @todo normally we should also now retrieve and merge user tracking data if it is associated.
-                    return new TrackingData(trackingNode);
                 }
             });
         } catch (RepositoryException e) {
