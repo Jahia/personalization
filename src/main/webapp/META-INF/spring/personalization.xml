@@ -46,4 +46,8 @@
         <property name="schedulerService" ref="SchedulerService" />
     </bean>
 
+    <bean class="org.jahia.modules.personalization.tracking.TrackingHelper" factory-method="getInstance">
+        <property name="trackingService" ref="TrackingService" />
+    </bean>
+
 </beans>

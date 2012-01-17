@@ -1,5 +1,8 @@
 package org.jahia.modules.personalization.tracking;
 
+import org.jahia.services.content.JCRNodeWrapper;
+
+import javax.jcr.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,6 +20,58 @@ public class TrackingData implements Serializable {
     private String associatedUserIdentifier;
 
     private Map<String, List<String>> trackingMap = new HashMap<String, List<String>>();
+
+    // @todo not yet implemented.
+    private Map<String, List<String>> removedEntries = new HashMap<String, List<String>>();
+
+    public TrackingData() {}
+
+    public TrackingData(JCRNodeWrapper node) throws RepositoryException {
+        storageID = node.getIdentifier();
+        PropertyIterator propertyIterator = node.getProperties();
+        while (propertyIterator.hasNext()) {
+            Property property = propertyIterator.nextProperty();
+            if (property.getName().equals("j:clientId")) {
+                clientID = property.getString();
+            } else if (property.getName().equals("j:associatedUserKey")) {
+                associatedUserKey = property.getString();
+            } else if (property.getName().equals("j:associatedUserIdentifier")) {
+                associatedUserIdentifier = property.getNode().getIdentifier();
+            } else {
+                List<String> trackingMapValue = new ArrayList<String>();
+                if (property.isMultiple()) {
+                    Value[] values = property.getValues();
+                    for (Value value : values) {
+                        trackingMapValue.add(value.getString());
+                    }
+                } else {
+                    trackingMapValue.add(property.getString());
+                }
+                trackingMap.put(property.getName(), trackingMapValue);
+            }
+        }
+    }
+
+    public JCRNodeWrapper toJCRNode(JCRNodeWrapper node) throws RepositoryException {
+        node.setProperty("j:clientId", clientID);
+        if (associatedUserKey != null) {
+            node.setProperty("j:associatedUserKey", associatedUserKey);
+        }
+        if (associatedUserIdentifier != null) {
+            JCRNodeWrapper associatedUserNode = node.getSession().getNodeByIdentifier(associatedUserIdentifier);
+            node.setProperty("j:associatedUserIdentifier", associatedUserNode);
+        }
+        for (Map.Entry<String,List<String>> trackingMapEntry : trackingMap.entrySet()) {
+            ValueFactory valueFactory = node.getSession().getValueFactory();
+            List<String> stringList = trackingMapEntry.getValue();
+            List<Value> valueList = new ArrayList<Value>();
+            for (String curString : stringList) {
+                valueList.add(valueFactory.createValue(curString));
+            }
+            node.setProperty(trackingMapEntry.getKey(), valueList.toArray(new Value[valueList.size()]));
+        }
+        return node;
+    }
 
     public String getStorageID() {
         return storageID;
@@ -105,6 +160,35 @@ public class TrackingData implements Serializable {
         stringList.add(newValue);
         trackingMap.put(mapKey, stringList);
     }
+
+    /**
+     * Use this method to merge tracking data from another object into this one. This method will only merge
+     * the tracking map, not other fields. For the moment these objects do not track removals so we simply add
+     * all values.
+     * @param otherTrackingData
+     * @return
+     */
+    public TrackingData merge(TrackingData otherTrackingData) {
+        Map<String,List<String>> otherTrackingMap = otherTrackingData.getTrackingMap();
+        for (Map.Entry<String,List<String>> otherTrackingMapEntry : otherTrackingMap.entrySet()) {
+            if (trackingMap.containsKey(otherTrackingMapEntry.getKey())) {
+                // we already have this entry, we must merge the lists.
+                List<String> ourList = trackingMap.get(otherTrackingMapEntry.getKey());
+                List<String> otherList = otherTrackingMapEntry.getValue();
+                for (String otherString : otherList) {
+                    if (!ourList.contains(otherString)) {
+                        ourList.add(otherString);
+                    }
+                }
+                trackingMap.put(otherTrackingMapEntry.getKey(), ourList);
+            } else {
+                trackingMap.put(otherTrackingMapEntry.getKey(), otherTrackingMapEntry.getValue());
+            }
+        }
+        return this;
+    }
+
+    // Private methods
 
     private String getSingleValue(String mapKey) {
         List<String> stringList = trackingMap.get(mapKey);

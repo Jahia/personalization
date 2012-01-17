@@ -23,7 +23,7 @@ public class TrackingFilter extends AbstractFilter {
 
     private List<TrackerInterface> trackers = new ArrayList<TrackerInterface>();
 
-    private ThreadLocal<TrackingData> trackingDataThreadLocal = new ThreadLocal<TrackingData>();
+    private static ThreadLocal<TrackingData> trackingDataThreadLocal = new ThreadLocal<TrackingData>();
 
     public String getTrackingCookieName() {
         return trackingCookieName;
@@ -65,15 +65,14 @@ public class TrackingFilter extends AbstractFilter {
                 if (cookie.getName().equals(trackingCookieName)) {
                     // we have found the cookie, we must lookup the tracking data in the persistent storage.
                     String trackingID = cookie.getValue();
-                    trackingData = trackingService.getById(trackingID);
+                    trackingData = trackingService.getByClientId(trackingID);
                     break;
                 }
             }
             if (trackingData == null) {
                 // tracking data was not found using a cookie, this probably means that we need to create a new one
                 trackingData = new TrackingData();
-                Calendar calendar = Calendar.getInstance();
-                trackingData.setClientID(calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.DAY_OF_MONTH) + "-" + UUID.randomUUID().toString());
+                trackingData.setClientID(TrackingHelper.getInstance().generateNewClientID());
                 Cookie trackingCookie = new Cookie(trackingCookieName, trackingData.getClientID());
                 trackingCookie.setMaxAge(Integer.MAX_VALUE);
                 trackingCookie.setPath("/");
@@ -123,5 +122,9 @@ public class TrackingFilter extends AbstractFilter {
             // we have an invalid session, cannot do anything with it.
         }
         trackingDataThreadLocal.set(null);
+    }
+
+    public static TrackingData getThreadLocalTrackingData() {
+        return trackingDataThreadLocal.get();
     }
 }
