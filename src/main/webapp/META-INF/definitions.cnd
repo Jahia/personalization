@@ -112,3 +112,5 @@
 - j:associatedUserIdentifier (weakreference)
 - * (string) multiple
 + * (nt:base)
+
+[jnt:trackingDataViewer] > jnt:content, jmix:personalizationComponents
