@@ -114,3 +114,5 @@
 + * (nt:base)
 
 [jnt:trackingDataViewer] > jnt:content, jmix:personalizationComponents
+
+[jnt:trackingDataUpdater] > jnt:content, jmix:personalizationComponents
