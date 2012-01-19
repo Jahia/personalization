@@ -61,12 +61,14 @@ public class TrackingFilter extends AbstractFilter {
         TrackingData trackingData = (TrackingData) session.getAttribute(trackingSessionName);
         if (trackingData == null) {
             Cookie[] cookies = renderContext.getRequest().getCookies();
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals(trackingCookieName)) {
-                    // we have found the cookie, we must lookup the tracking data in the persistent storage.
-                    String trackingID = cookie.getValue();
-                    trackingData = trackingService.getByClientId(trackingID);
-                    break;
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if (cookie.getName().equals(trackingCookieName)) {
+                        // we have found the cookie, we must lookup the tracking data in the persistent storage.
+                        String trackingID = cookie.getValue();
+                        trackingData = trackingService.getByClientId(trackingID);
+                        break;
+                    }
                 }
             }
             if (trackingData == null) {

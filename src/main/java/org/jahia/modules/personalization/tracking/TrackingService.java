@@ -93,12 +93,19 @@ public class TrackingService {
         String[] trackingIdParts = TrackingHelper.getInstance().getClientIDParts(newTrackingData.getClientID());
         JCRNodeWrapper trackingRootNode = getTrackingRootNode(session);
         JCRNodeWrapper trackingNode = trackingRootNode;
+        int i=0;
         for (String trackingIdPart : trackingIdParts) {
             try {
                 trackingNode = trackingNode.getNode(trackingIdPart);
             } catch (PathNotFoundException pnfe) {
-                trackingNode = trackingNode.addNode(trackingIdPart);
+                if (i < (trackingIdParts.length-1)) {
+                    trackingNode = trackingNode.addNode(trackingIdPart, "nt:folder");
+                } else {
+                    trackingNode = trackingNode.addNode(trackingIdPart, "jnt:trackingData");
+
+                }
             }
+            i++;
         }
         return trackingNode;
     }

@@ -1,7 +1,9 @@
 package org.jahia.modules.personalization.tracking;
 
+import org.jahia.bin.Logout;
 import org.jahia.bin.listeners.JahiaContextLoaderListener;
 import org.jahia.params.ProcessingContext;
+import org.jahia.params.valves.LoginEngineAuthValveImpl;
 import org.jahia.services.scheduler.BackgroundJob;
 import org.jahia.services.scheduler.SchedulerService;
 import org.jahia.services.usermanager.JahiaUser;
@@ -14,15 +16,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
-import java.util.Set;
 
 /**
  * This class listeners to servlet events, such as session creation/deletion, etc...
  */
-public class ServletEventListener implements ApplicationListener {
+public class TrackingEventListener implements ApplicationListener {
 
-    private static Logger logger = LoggerFactory.getLogger(ServletEventListener.class);
+    private static Logger logger = LoggerFactory.getLogger(TrackingEventListener.class);
 
     public TrackingFilter trackingFilter;
     public SchedulerService schedulerService;
@@ -43,59 +45,46 @@ public class ServletEventListener implements ApplicationListener {
         } else if (event instanceof JahiaContextLoaderListener.HttpSessionDestroyedEvent) {
             // schedule background job to store or update the TrackingData
             JahiaContextLoaderListener.HttpSessionDestroyedEvent sessionDestroyedEvent = (JahiaContextLoaderListener.HttpSessionDestroyedEvent) event;
-            TrackingData trackingData = (TrackingData) sessionDestroyedEvent.getSession().getAttribute(trackingFilter.getTrackingSessionName());
+            HttpSession session = sessionDestroyedEvent.getSession();
+            long lastAccessedTime = session.getLastAccessedTime();
+            long maxInactiveInterval = session.getMaxInactiveInterval() * 1000;
+            long nowTime = System.currentTimeMillis();
+
+            // we check the times because we need to differentiate between a session invalidation on login/logout and a session expiration.
+            if ((nowTime - lastAccessedTime) >= maxInactiveInterval) {
+                // session has indeed expired.
+                TrackingData trackingData = (TrackingData) sessionDestroyedEvent.getSession().getAttribute(trackingFilter.getTrackingSessionName());
+                if (trackingData == null) {
+                    return;
+                }
+                // as sessions gets destroyed upon login (because we do an invalidate), we should use a ThreadLocal variable or a request attribute to keep the trackingData instance
+                scheduleJob(trackingData);
+            }
+
+        } else if (event instanceof JahiaContextLoaderListener.HttpSessionAttributeAddedEvent) {
+            HttpSessionBindingEvent sessionBindingEvent = ((JahiaContextLoaderListener.HttpSessionAttributeAddedEvent)event).getHttpSessionBindingEvent();
+        } else if (event instanceof JahiaContextLoaderListener.HttpSessionAttributeRemovedEvent) {
+            HttpSessionBindingEvent sessionBindingEvent = ((JahiaContextLoaderListener.HttpSessionAttributeRemovedEvent)event).getHttpSessionBindingEvent();
+        } else if (event instanceof JahiaContextLoaderListener.HttpSessionAttributeReplacedEvent) {
+            HttpSessionBindingEvent sessionBindingEvent = ((JahiaContextLoaderListener.HttpSessionAttributeReplacedEvent)event).getHttpSessionBindingEvent();
+        } else if (event instanceof LoginEngineAuthValveImpl.LoginEvent) {
+            LoginEngineAuthValveImpl.LoginEvent loginEvent = (LoginEngineAuthValveImpl.LoginEvent) event;
+            TrackingData trackingData = (TrackingData) loginEvent.getAuthValveContext().getRequest().getSession().getAttribute(trackingFilter.getTrackingSessionName());
+            if (trackingData == null) {
+                trackingData = trackingFilter.getThreadLocalTrackingData();
+                if (trackingData == null) {
+                    return;
+                }
+            }
+            trackingData.setAssociatedUserKey(loginEvent.getJahiaUser().getUserKey());
+        } else if (event instanceof Logout.LogoutEvent) {
+            Logout.LogoutEvent logoutEvent = (Logout.LogoutEvent) event;
+            TrackingData trackingData = (TrackingData) logoutEvent.getRequest().getSession().getAttribute(trackingFilter.getTrackingSessionName());
             if (trackingData == null) {
                 return;
             }
-            // as sessions gets destroyed upon login (because we do an invalidate), we should use a ThreadLocal variable or a request attribute to keep the trackingData instance
-        } else if (event instanceof JahiaContextLoaderListener.HttpSessionAttributeAddedEvent) {
-            HttpSessionBindingEvent sessionBindingEvent = ((JahiaContextLoaderListener.HttpSessionAttributeAddedEvent)event).getHttpSessionBindingEvent();
-            if (sessionBindingEvent.getName().equals(ProcessingContext.SESSION_USER)) {
-                // seems we have a new user that is logged in, but we must still check if it is guest.
-                JahiaUser jahiaUser = (JahiaUser) sessionBindingEvent.getValue();
-                if (!jahiaUser.getUsername().equals(JahiaUserManagerService.GUEST_USERNAME)) {
-                    // we have detected a non-guest user, we must associate the tracking data with the user.
-                    TrackingData trackingData = (TrackingData) sessionBindingEvent.getSession().getAttribute(trackingFilter.getTrackingSessionName());
-                    if (trackingData == null) {
-                        trackingData = trackingFilter.getThreadLocalTrackingData();
-                        if (trackingData == null) {
-                            return;
-                        }
-                    }
-                    trackingData.setAssociatedUserKey(jahiaUser.getUserKey());
-                    // ideally we should also load tracking data in the user profile and merge with the current tracking data.
-                }
+            scheduleJob(trackingData);
 
-            }
-        } else if (event instanceof JahiaContextLoaderListener.HttpSessionAttributeRemovedEvent) {
-            HttpSessionBindingEvent sessionBindingEvent = ((JahiaContextLoaderListener.HttpSessionAttributeRemovedEvent)event).getHttpSessionBindingEvent();
-            if (sessionBindingEvent.getName().equals(ProcessingContext.SESSION_USER)) {
-                // seems we have a new user that is logged out, but we must still check if it is guest.
-                JahiaUser jahiaUser = (JahiaUser) sessionBindingEvent.getValue();
-                if (!jahiaUser.getUsername().equals(JahiaUserManagerService.GUEST_USERNAME)) {
-                    // we have detected a non-guest user, we must schedule schedule background storage
-                    TrackingData trackingData = (TrackingData) sessionBindingEvent.getSession().getAttribute(trackingFilter.getTrackingSessionName());
-                    if (trackingData == null) {
-                        return;
-                    }
-                    scheduleJob(trackingData);
-                }
-
-            }
-        } else if (event instanceof JahiaContextLoaderListener.HttpSessionAttributeReplacedEvent) {
-            HttpSessionBindingEvent sessionBindingEvent = ((JahiaContextLoaderListener.HttpSessionAttributeReplacedEvent)event).getHttpSessionBindingEvent();
-            if (sessionBindingEvent.getName().equals(ProcessingContext.SESSION_USER)) {
-                // seems we have a new user that is logged out, but we must still check if it is guest.
-                JahiaUser jahiaUser = (JahiaUser) sessionBindingEvent.getValue();
-                if (!jahiaUser.getUsername().equals(JahiaUserManagerService.GUEST_USERNAME)) {
-                    // we have detected a non-guest user, we must schedule schedule background storage
-                    TrackingData trackingData = (TrackingData) sessionBindingEvent.getSession().getAttribute(trackingFilter.getTrackingSessionName());
-                    if (trackingData == null) {
-                        return;
-                    }
-                    scheduleJob(trackingData);
-                }
-            }
         }
 
     }

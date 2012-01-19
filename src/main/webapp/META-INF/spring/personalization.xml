@@ -41,7 +41,7 @@
         </property>
     </bean>
 
-    <bean class="org.jahia.modules.personalization.tracking.ServletEventListener">
+    <bean class="org.jahia.modules.personalization.tracking.TrackingEventListener">
         <property name="trackingFilter" ref="TrackingFilter" />
         <property name="schedulerService" ref="SchedulerService" />
     </bean>
