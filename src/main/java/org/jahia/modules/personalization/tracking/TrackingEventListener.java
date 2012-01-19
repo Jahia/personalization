@@ -77,6 +77,7 @@ public class TrackingEventListener implements ApplicationListener {
                 }
             }
             trackingData.setAssociatedUserKey(loginEvent.getJahiaUser().getUserKey());
+            // we should now merge with user tracking data
         } else if (event instanceof Logout.LogoutEvent) {
             Logout.LogoutEvent logoutEvent = (Logout.LogoutEvent) event;
             TrackingData trackingData = (TrackingData) logoutEvent.getRequest().getSession().getAttribute(trackingFilter.getTrackingSessionName());
