@@ -10,23 +10,28 @@
 <c:set value="${trackingData.trackingMap}" var="trackingMap" />
 <c:set value="${trackingMap.urls}" var="urls" />
 <c:set value="${trackingMap.locales}" var="locales" />
-<c:set value="${trackingMap.locales}" var="hosts" />
+<c:set value="${trackingMap.hosts}" var="hosts" />
 
 <c:choose>
     <c:when test="${renderContext.editMode}">
         <div class="personalizationbox">
-            <h4><fmt:message key="label.trackingData"/></h4>
-                <p><fmt:message key="label.trackingData.componentDescription"/></p>
+            <h4><fmt:message key="label.trackingDataViewer"/></h4>
+                <p><fmt:message key="label.trackingDataViewer.componentDescription"/></p>
             <table>
                 <tr>
                     <th>Tracker</th>
                     <th>Value</th>
                 </tr>
-                <tr>
-                    <td>URLs</td><td><c:out value="${urls}"/></td>
-                    <td>Locale</td><td><c:out value="${locales}"/></td>
-                    <td>Hosts</td><td><c:out value="${hosts}"/></td>
-                </tr>
+                <c:forEach var="entry" items="${trackingMap}">
+                    <tr>
+                      <td><c:out value="${entry.key}"/></td>
+                      <td>
+                          <c:forEach var="listEntry" items="${entry.value}">
+                              <c:out value="${listEntry}" /> <br/>
+                          </c:forEach>
+                      </td>
+                    </tr>
+                </c:forEach>
             </table>
         </div>
     </c:when>
