@@ -99,7 +99,7 @@ public class TrackingService {
                 trackingNode = trackingNode.getNode(trackingIdPart);
             } catch (PathNotFoundException pnfe) {
                 if (i < (trackingIdParts.length-1)) {
-                    trackingNode = trackingNode.addNode(trackingIdPart, "nt:folder");
+                    trackingNode = trackingNode.addNode(trackingIdPart);
                 } else {
                     trackingNode = trackingNode.addNode(trackingIdPart, "jnt:trackingData");
 

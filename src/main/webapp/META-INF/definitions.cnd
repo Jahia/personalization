@@ -106,7 +106,7 @@
 
 // Tracking data structures
 
-[jnt:trackingData] > nt:base, jmix:nodenameInfo, jmix:basemetadata, jmix:list, jmix:observable
+[jnt:trackingData] > jnt:content
 - j:clientId (string)
 - j:associatedUserKey (string)
 - j:associatedUserIdentifier (weakreference)
@@ -116,3 +116,6 @@
 [jnt:trackingDataViewer] > jnt:content, jmix:personalizationComponents
 
 [jnt:trackingDataUpdater] > jnt:content, jmix:personalizationComponents
+
+[jnt:trackingDataReport] > jnt:content, jmix:personalizationComponents
+- j:mapKey (string)
