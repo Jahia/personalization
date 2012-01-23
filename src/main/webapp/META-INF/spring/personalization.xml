@@ -27,28 +27,123 @@
 
     <bean name="TrackingFilter" class="org.jahia.modules.personalization.tracking.TrackingFilter">
         <property name="priority" value="0"/>
-        <property name="trackingCookieName" value="${jahiaTrackingCookieName:jahiaTrackingID}" />
-        <property name="trackingSessionName" value="${jahiaTrackingSessionName:org.jahia.modules.personalization.trackingData}"/>
-        <property name="trackingService" ref="TrackingService" />
+        <property name="trackingCookieName" value="${jahiaTrackingCookieName:jahiaTrackingID}"/>
+        <property name="trackingSessionName"
+                  value="${jahiaTrackingSessionName:org.jahia.modules.personalization.trackingData}"/>
+        <property name="trackingService" ref="TrackingService"/>
         <property name="trackers">
             <list>
-                <bean class="org.jahia.modules.personalization.tracking.trackers.SpamPostLimiterTracker" />
-                <bean class="org.jahia.modules.personalization.tracking.trackers.UrlAndRefererTracker" />
-                <bean class="org.jahia.modules.personalization.tracking.trackers.HostAndIpAddressTracker" />
-                <bean class="org.jahia.modules.personalization.tracking.trackers.UserAgentTracker" />
-                <bean class="org.jahia.modules.personalization.tracking.trackers.LocalesTracker" />
+                <bean class="org.jahia.modules.personalization.tracking.trackers.SpamPostLimiterTracker"/>
+                <bean class="org.jahia.modules.personalization.tracking.trackers.UrlAndRefererTracker"/>
+                <bean class="org.jahia.modules.personalization.tracking.trackers.HostAndIpAddressTracker"/>
+                <bean class="org.jahia.modules.personalization.tracking.trackers.UserAgentTracker"/>
+                <bean class="org.jahia.modules.personalization.tracking.trackers.LocalesTracker"/>
             </list>
         </property>
     </bean>
 
     <bean class="org.jahia.modules.personalization.tracking.TrackingEventListener">
-        <property name="trackingFilter" ref="TrackingFilter" />
-        <property name="schedulerService" ref="SchedulerService" />
-        <property name="trackingService" ref="TrackingService" />
+        <property name="trackingFilter" ref="TrackingFilter"/>
+        <property name="schedulerService" ref="SchedulerService"/>
+        <property name="trackingService" ref="TrackingService"/>
     </bean>
 
     <bean class="org.jahia.modules.personalization.tracking.TrackingHelper" factory-method="getInstance">
-        <property name="trackingService" ref="TrackingService" />
+        <property name="trackingService" ref="TrackingService"/>
     </bean>
+
+    <!-- WURFL Java API Beans -->
+
+    <!-- =================WURFL MODEL REPRESENTATION========================== -->
+    <bean id="wurflModel" class="net.sourceforge.wurfl.spring.SpringWURFLModel">
+        <!--default root file location-->
+        <property name="wurfl" value="/modules/personalization/WEB-INF/wurfl-2.3.xml.zip"/>
+
+        <!--if you have only one patchfile , you can write this way-->
+        <!--property name="wurflPatch" value="/WEB-INF/web_browsers_patch.xml"/-->
+
+        <!-- otherwise, for 2 or more patch files -->
+        <!--
+        <property name="wurflPatches">
+            <list>
+                <value>/WEB-INF/web_browsers_patch.xml</value>
+                <value>/WEB-INF/web_browsers_patch2.xml</value>
+            </list>
+        </property>
+        -->
+
+    </bean>
+
+
+    <!-- =================CapabilitiesHolderFactory CUSTOMIZING========================== -->
+
+    <!-- CapabilitiesHolderFactory -->
+    <bean id="capabilitiesHolderFactory"
+          class="net.sourceforge.wurfl.core.DefaultCapabilitiesHolderFactory">
+        <constructor-arg ref="wurflModel"/>
+    </bean>
+
+    <!--
+   <bean id="capabilitiesHolderFactory"
+       class="net.sourceforge.wurfl.core.HierarchyCapabilitiesHolderFactory">
+       <constructor-arg ref="wurflModel" />
+   </bean>
+    -->
+
+    <!-- =================CACHE CUSTOMIZING========================== -->
+
+    <!-- DeviceCacheProvider -->
+    <bean id="deviceCacheProvider" class="net.sourceforge.wurfl.core.cache.LRUMapCacheProvider"/>
+
+    <!--
+        <bean id="deviceCacheProvider"
+        class="net.sourceforge.wurfl.core.cache.HashMapCacheProvider" />
+    -->
+
+    <!--
+        <bean id="deviceCacheProvider"
+        class="net.sourceforge.wurfl.core.cache.NullCacheProvider" />
+    -->
+
+    <!--
+  <bean id="cacheManager"
+      class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+      <property name="configLocation">
+          <value>/WEB-INF/ehcache.xml</value>
+      </property>
+  </bean>
+
+  <bean id="deviceCacheProvider" class="net.sourceforge.wurfl.core.cache.EhCacheProvider">
+      <property name="cache">
+          <bean class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+              <property name="cacheManager" ref="cacheManager" />
+              <property name="cacheName" value="net.sourceforge.wurfl.core.Device" />
+          </bean>
+      </property>
+  </bean>
+    -->
+
+    <!-- =================ENGINE MANAGER========================== -->
+
+    <!-- WURFLManager, automatically exported in ServletContext, if you need outside Spring. See Javadoc -->
+    <bean id="wurflManager" class="net.sourceforge.wurfl.spring.SpringWurflManager">
+        <property name="wurflModel" ref="wurflModel"/>
+        <property name="capabilitiesHolderFactory" ref="capabilitiesHolderFactory"/>
+        <property name="cacheProvider" ref="deviceCacheProvider"/>
+        <!--if you have only one patchfile , you can write this way-->
+        <property name="wurflPatch" value="/WEB-INF/web_browsers_patch.xml"/>
+
+        <!-- otherwise, for 2 or more patch files -->
+        <!--
+        <property name="wurflPatches">
+            <list>
+                <value>/WEB-INF/web_browsers_patch.xml</value>
+                <value>/WEB-INF/web_browsers_patch2.xml</value>
+            </list>
+        </property>
+        -->
+
+    </bean>
+
 
 </beans>

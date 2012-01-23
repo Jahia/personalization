@@ -1,3 +1,6 @@
+<%@ page import="net.sourceforge.wurfl.core.MarkUp" %>
+<%@ page import="net.sourceforge.wurfl.core.Device" %>
+<%@ page import="net.sourceforge.wurfl.core.WURFLManager" %>
 <%@ taglib prefix="jcr" uri="http://www.jahia.org/tags/jcr" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -38,5 +41,17 @@
 
     <c:otherwise>
         <!-- display nothing -->
+
+<%
+        WURFLManager wurfl = (WURFLManager) pageContext.getServletContext().getAttribute("net.sourceforge.wurfl.core.WURFLHolder");
+
+        Device device = wurfl.getDeviceForRequest(request);
+
+        out.println("Device: " + device.getId());
+        out.println("Capability: " + device.getCapability("preferred_markup"));
+
+        MarkUp markUp = device.getMarkUp();
+
+%>
     </c:otherwise>
 </c:choose>
