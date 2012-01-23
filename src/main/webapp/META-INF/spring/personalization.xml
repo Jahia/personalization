@@ -22,7 +22,7 @@
     </bean>
 
     <bean name="TrackingService" class="org.jahia.modules.personalization.tracking.TrackingService">
-
+        <property name="jahiaUserManagerService" ref="JahiaUserManagerService"/>
     </bean>
 
     <bean name="TrackingFilter" class="org.jahia.modules.personalization.tracking.TrackingFilter">
@@ -44,6 +44,7 @@
     <bean class="org.jahia.modules.personalization.tracking.TrackingEventListener">
         <property name="trackingFilter" ref="TrackingFilter" />
         <property name="schedulerService" ref="SchedulerService" />
+        <property name="trackingService" ref="TrackingService" />
     </bean>
 
     <bean class="org.jahia.modules.personalization.tracking.TrackingHelper" factory-method="getInstance">

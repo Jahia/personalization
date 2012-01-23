@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * Main class for all tracking data
  */
-public class TrackingData implements Serializable {
+public class TrackingData implements Serializable, Cloneable {
 
     private String storageID;
     private String clientID;
@@ -25,6 +25,11 @@ public class TrackingData implements Serializable {
     private Map<String, List<String>> removedEntries = new HashMap<String, List<String>>();
 
     public TrackingData() {}
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 
     public TrackingData(JCRNodeWrapper node) throws RepositoryException {
         storageID = node.getIdentifier();

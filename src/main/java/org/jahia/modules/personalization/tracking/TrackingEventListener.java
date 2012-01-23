@@ -28,6 +28,7 @@ public class TrackingEventListener implements ApplicationListener {
 
     public TrackingFilter trackingFilter;
     public SchedulerService schedulerService;
+    public TrackingService trackingService;
 
     public void setTrackingFilter(TrackingFilter trackingFilter) {
         this.trackingFilter = trackingFilter;
@@ -35,6 +36,10 @@ public class TrackingEventListener implements ApplicationListener {
 
     public void setSchedulerService(SchedulerService schedulerService) {
         this.schedulerService = schedulerService;
+    }
+
+    public void setTrackingService(TrackingService trackingService) {
+        this.trackingService = trackingService;
     }
 
     public void onApplicationEvent(ApplicationEvent event) {
@@ -75,8 +80,16 @@ public class TrackingEventListener implements ApplicationListener {
                     return;
                 }
             }
-            trackingData.setAssociatedUserKey(loginEvent.getJahiaUser().getUserKey());
-            // we should now merge with user tracking data
+
+            if (trackingData.getAssociatedUserKey() == null) {
+                trackingData.setAssociatedUserKey(loginEvent.getJahiaUser().getUserKey());
+                // we should now merge with user tracking data
+
+                TrackingData userTrackingData = trackingService.getUserTrackingData(loginEvent.getJahiaUser().getUserKey());
+                if (userTrackingData != null) {
+                    trackingData.merge(userTrackingData);
+                }
+            }
         } else if (event instanceof Logout.LogoutEvent) {
             Logout.LogoutEvent logoutEvent = (Logout.LogoutEvent) event;
             TrackingData trackingData = (TrackingData) logoutEvent.getRequest().getSession().getAttribute(trackingFilter.getTrackingSessionName());
@@ -94,7 +107,12 @@ public class TrackingEventListener implements ApplicationListener {
                 + trackingData.getClientID(), TrackingStorageJob.class);
         jobDetail.setGroup("Personalization");
         JobDataMap jobDataMap = jobDetail.getJobDataMap();
-        jobDataMap.put(TrackingStorageJob.JOB_TRACKINGDATA, trackingData);
+        try {
+            jobDataMap.put(TrackingStorageJob.JOB_TRACKINGDATA, trackingData.clone());
+        } catch (CloneNotSupportedException cnse) {
+            logger.error("Error while trying to clone tracking data object, will not schedule saving of tracking data", cnse);
+            return;
+        }
 
         logger.info("Scheduling tracking data storage for client {} associatedUser={}",
                 trackingData.getClientID(), trackingData.getAssociatedUserKey());
