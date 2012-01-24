@@ -21,10 +21,6 @@
         <property name="userManagerService" ref="JahiaUserManagerService"/>
     </bean>
 
-    <bean name="TrackingService" class="org.jahia.modules.personalization.tracking.TrackingService">
-        <property name="jahiaUserManagerService" ref="JahiaUserManagerService"/>
-    </bean>
-
     <!-- WURFL Java API Beans -->
 
     <!-- =================WURFL MODEL REPRESENTATION========================== -->

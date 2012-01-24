@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * A tracker that tracks HTTP POST activity in live mode, to be able to limit spamming using automated software.
@@ -48,7 +49,13 @@ public class SpamPostLimiterTracker implements TrackerInterface {
 
                 if (lastPostLoadAverage > lastPostLoadAverageLimit) {
                     // we have detected possible spam activity
-                    logger.warn("Possible spam posting detected");
+                    logger.warn("Possible spam posting detected by user " + trackingData.getAssociatedUserKey() + " from ip " + request.getRemoteAddr() + " with session " + request.getSession().getId());
+                    try {
+                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Too many submissions from the same user in a short amount of time, suspecting spamming.");
+                        return false;
+                    } catch (IOException ioe) {
+                        logger.error("Error sending response error status ", ioe);
+                    }
                 }
 
             }

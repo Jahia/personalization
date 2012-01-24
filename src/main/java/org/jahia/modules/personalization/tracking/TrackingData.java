@@ -31,7 +31,7 @@ public class TrackingData implements Serializable, Cloneable {
         return super.clone();
     }
 
-    public TrackingData(JCRNodeWrapper node) throws RepositoryException {
+    public TrackingData(JCRNodeWrapper node, List<String> ignoredProperties) throws RepositoryException {
         storageID = node.getIdentifier();
         PropertyIterator propertyIterator = node.getProperties();
         while (propertyIterator.hasNext()) {
@@ -43,21 +43,23 @@ public class TrackingData implements Serializable, Cloneable {
             } else if (property.getName().equals("j:associatedUserIdentifier")) {
                 associatedUserIdentifier = property.getNode().getIdentifier();
             } else {
-                List<String> trackingMapValue = new ArrayList<String>();
-                if (property.isMultiple()) {
-                    Value[] values = property.getValues();
-                    for (Value value : values) {
-                        trackingMapValue.add(value.getString());
+                if (!isIgnoredProperty(ignoredProperties, property.getName())) {
+                    List<String> trackingMapValue = new ArrayList<String>();
+                    if (property.isMultiple()) {
+                        Value[] values = property.getValues();
+                        for (Value value : values) {
+                            trackingMapValue.add(value.getString());
+                        }
+                    } else {
+                        trackingMapValue.add(property.getString());
                     }
-                } else {
-                    trackingMapValue.add(property.getString());
+                    trackingMap.put(property.getName(), trackingMapValue);
                 }
-                trackingMap.put(property.getName(), trackingMapValue);
             }
         }
     }
 
-    public JCRNodeWrapper toJCRNode(JCRNodeWrapper node) throws RepositoryException {
+    public JCRNodeWrapper toJCRNode(JCRNodeWrapper node, List<String> ignoredProperties) throws RepositoryException {
         node.setProperty("j:clientId", clientID);
         if (associatedUserKey != null) {
             node.setProperty("j:associatedUserKey", associatedUserKey);
@@ -73,7 +75,9 @@ public class TrackingData implements Serializable, Cloneable {
             for (String curString : stringList) {
                 valueList.add(valueFactory.createValue(curString));
             }
-            node.setProperty(trackingMapEntry.getKey(), valueList.toArray(new Value[valueList.size()]));
+            if (!isIgnoredProperty(ignoredProperties, trackingMapEntry.getKey())) {
+                node.setProperty(trackingMapEntry.getKey(), valueList.toArray(new Value[valueList.size()]));
+            }
         }
         return node;
     }
@@ -215,5 +219,14 @@ public class TrackingData implements Serializable, Cloneable {
         stringList.add(value);
         List<String> oldList = trackingMap.put(mapKey, stringList);
         return getListSingleValue(oldList);
+    }
+
+    private boolean isIgnoredProperty(List<String> ignoredProperties, String propertyName) {
+        for (String ignoredProperty : ignoredProperties) {
+            if (propertyName.matches(ignoredProperty)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

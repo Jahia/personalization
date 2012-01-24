@@ -91,7 +91,7 @@ public class TrackingHandlerInterceptor extends HandlerInterceptorAdapter {
         // now let's call all the trackers to update the trackingData structure.
         for (TrackerInterface tracker : trackers) {
             if (!tracker.track(request, response, trackingData)) {
-                break;
+                return false;
             }
         }
 

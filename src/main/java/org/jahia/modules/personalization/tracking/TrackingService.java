@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Tracking data persistence storage service.
@@ -23,8 +25,14 @@ public class TrackingService {
 
     private JahiaUserManagerService jahiaUserManagerService;
 
+    private List<String> ignoredProperties = new ArrayList<String>();
+
     public void setJahiaUserManagerService(JahiaUserManagerService jahiaUserManagerService) {
         this.jahiaUserManagerService = jahiaUserManagerService;
+    }
+
+    public void setIgnoredProperties(List<String> ignoredProperties) {
+        this.ignoredProperties = ignoredProperties;
     }
 
     public TrackingData getByClientId(final String trackingClientId) {
@@ -40,7 +48,7 @@ public class TrackingService {
                         }
                         // @todo normally we should also now retrieve and merge user tracking data if it is associated.
 
-                        TrackingData trackingData = new TrackingData(trackingNode);
+                        TrackingData trackingData = new TrackingData(trackingNode, ignoredProperties);
                         if (trackingData.getAssociatedUserKey() != null) {
                             TrackingData userTrackingData = getUserTrackingData(trackingData.getAssociatedUserKey());
                             if (userTrackingData != null) {
@@ -72,7 +80,7 @@ public class TrackingService {
                     } else {
                         targetTrackingNode = createTargetTrackingNode(session, newTrackingData);
                     }
-                    newTrackingData.toJCRNode(targetTrackingNode);
+                    newTrackingData.toJCRNode(targetTrackingNode, ignoredProperties);
 
                     if (newTrackingData.getAssociatedUserKey() != null) {
                         final JahiaUser jahiaUser = jahiaUserManagerService.lookupUserByKey(newTrackingData.getAssociatedUserKey());
@@ -105,7 +113,7 @@ public class TrackingService {
                     JCRNodeWrapper userNode = session.getNode(userJCRPath);
                     if (userNode.hasNode("trackingData")) {
                         JCRNodeWrapper userTrackingDataNode = userNode.getNode("trackingData");
-                        TrackingData trackingData = new TrackingData(userTrackingDataNode);
+                        TrackingData trackingData = new TrackingData(userTrackingDataNode, ignoredProperties);
                         return trackingData;
                     } else {
                         return null;
@@ -145,7 +153,7 @@ public class TrackingService {
         } else {
             userTrackingDataNode = userNode.getNode("trackingData");
         }
-        trackingData.toJCRNode(userTrackingDataNode);
+        trackingData.toJCRNode(userTrackingDataNode, ignoredProperties);
     }
 
     // Private methods
