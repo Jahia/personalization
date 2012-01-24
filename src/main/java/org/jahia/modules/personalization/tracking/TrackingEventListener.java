@@ -26,12 +26,12 @@ public class TrackingEventListener implements ApplicationListener {
 
     private static Logger logger = LoggerFactory.getLogger(TrackingEventListener.class);
 
-    public TrackingFilter trackingFilter;
+    public TrackingHandlerInterceptor trackingHandlerInterceptor;
     public SchedulerService schedulerService;
     public TrackingService trackingService;
 
-    public void setTrackingFilter(TrackingFilter trackingFilter) {
-        this.trackingFilter = trackingFilter;
+    public void setTrackingHandlerInterceptor(TrackingHandlerInterceptor trackingHandlerInterceptor) {
+        this.trackingHandlerInterceptor = trackingHandlerInterceptor;
     }
 
     public void setSchedulerService(SchedulerService schedulerService) {
@@ -57,7 +57,7 @@ public class TrackingEventListener implements ApplicationListener {
             // we check the times because we need to differentiate between a session invalidation on login/logout and a session expiration.
             if ((nowTime - lastAccessedTime) >= maxInactiveInterval) {
                 // session has indeed expired.
-                TrackingData trackingData = (TrackingData) sessionDestroyedEvent.getSession().getAttribute(trackingFilter.getTrackingSessionName());
+                TrackingData trackingData = (TrackingData) sessionDestroyedEvent.getSession().getAttribute(trackingHandlerInterceptor.getTrackingSessionName());
                 if (trackingData == null) {
                     return;
                 }
@@ -73,9 +73,9 @@ public class TrackingEventListener implements ApplicationListener {
             HttpSessionBindingEvent sessionBindingEvent = ((JahiaContextLoaderListener.HttpSessionAttributeReplacedEvent)event).getHttpSessionBindingEvent();
         } else if (event instanceof LoginEngineAuthValveImpl.LoginEvent) {
             LoginEngineAuthValveImpl.LoginEvent loginEvent = (LoginEngineAuthValveImpl.LoginEvent) event;
-            TrackingData trackingData = (TrackingData) loginEvent.getAuthValveContext().getRequest().getSession().getAttribute(trackingFilter.getTrackingSessionName());
+            TrackingData trackingData = (TrackingData) loginEvent.getAuthValveContext().getRequest().getSession().getAttribute(trackingHandlerInterceptor.getTrackingSessionName());
             if (trackingData == null) {
-                trackingData = trackingFilter.getThreadLocalTrackingData();
+                trackingData = trackingHandlerInterceptor.getThreadLocalTrackingData();
                 if (trackingData == null) {
                     return;
                 }
@@ -92,7 +92,7 @@ public class TrackingEventListener implements ApplicationListener {
             }
         } else if (event instanceof Logout.LogoutEvent) {
             Logout.LogoutEvent logoutEvent = (Logout.LogoutEvent) event;
-            TrackingData trackingData = (TrackingData) logoutEvent.getRequest().getSession().getAttribute(trackingFilter.getTrackingSessionName());
+            TrackingData trackingData = (TrackingData) logoutEvent.getRequest().getSession().getAttribute(trackingHandlerInterceptor.getTrackingSessionName());
             if (trackingData == null) {
                 return;
             }

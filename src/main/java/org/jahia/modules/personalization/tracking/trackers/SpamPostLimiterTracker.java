@@ -1,27 +1,65 @@
 package org.jahia.modules.personalization.tracking.trackers;
 
 import org.jahia.modules.personalization.tracking.TrackingData;
-import org.jahia.services.render.RenderContext;
-import org.jahia.services.render.Resource;
-import org.jahia.services.render.filter.RenderChain;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * A tracker that tracks HTTP POST activity in live mode, to be able to limit spamming using automated software.
  */
 public class SpamPostLimiterTracker implements TrackerInterface {
-    public boolean track(RenderContext renderContext, Resource resource, RenderChain chain, TrackingData trackingData) {
-        if (renderContext.isLiveMode()) {
+
+    private static Logger logger = LoggerFactory.getLogger(SpamPostLimiterTracker.class);
+
+    private double lastPostLoadAverageLimit = Double.MAX_VALUE;
+    private boolean logoutSpammingUser = true;
+    private boolean lockSpammingUserAccount = true;
+    private String spamNotificationEmail = null;
+
+    public void setLastPostLoadAverageLimit(double lastPostLoadAverageLimit) {
+        this.lastPostLoadAverageLimit = lastPostLoadAverageLimit;
+    }
+
+    public boolean track(HttpServletRequest request, HttpServletResponse response, TrackingData trackingData) {
+
+        Boolean alreadyCalculated = (Boolean) request.getAttribute("alreadyCalculatedPostAverage");
+        if (alreadyCalculated != null && alreadyCalculated.booleanValue()) {
+            return true;
+        }
+
+        if (request.getMethod().equalsIgnoreCase("post")) {
             Long lastPostMethodTime = trackingData.getLong("lastPostMethodTime");
+            Double lastPostLoadAverage = trackingData.getDouble("lastPostLoadAverage");
             long now = System.currentTimeMillis();
             if (lastPostMethodTime != null) {
                 // let's check for spam activity
                 long elapsedTime = now - lastPostMethodTime;
+                double elapsedTimeInSeconds = elapsedTime / 1000.0;
+                double timeInMinutes = 1;
+                double calcFreqDouble = 5.0;
+                if (lastPostLoadAverage == null) {
+                    lastPostLoadAverage = 0.0;
+                }
+                lastPostLoadAverage = lastPostLoadAverage * Math.exp(-calcFreqDouble / (60.0 * timeInMinutes)) + (5 / (elapsedTimeInSeconds)) * (1 - Math.exp(-calcFreqDouble / (60.0 * timeInMinutes)));
+                trackingData.setDouble("lastPostLoadAverage", lastPostLoadAverage);
+
+                if (lastPostLoadAverage > lastPostLoadAverageLimit) {
+                    // we have detected possible spam activity
+                    logger.warn("Possible spam posting detected");
+                }
+
             }
 
-            if (renderContext.getRequest().getMethod().toLowerCase().equals("post")) {
+            if (request.getMethod().toLowerCase().equals("post")) {
                 trackingData.setLong("lastPostMethodTime", now);
             }
         }
+
+        request.setAttribute("alreadyCalculatedPostAverage", new Boolean(true));
+
         return true;
     }
 }

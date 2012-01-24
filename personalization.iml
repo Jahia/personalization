@@ -13,6 +13,7 @@
       <configuration>
         <fileset id="fileset1" name="My Fileset" removed="false">
           <file>file://$MODULE_DIR$/src/main/resources/org/jahia/config/applicationcontext-tracking.xml</file>
+          <file>file://$MODULE_DIR$/src/main/resources/org/jahia/defaults/config/personalization/servlet-applicationcontext-renderer-personalization.xml</file>
         </fileset>
       </configuration>
     </facet>

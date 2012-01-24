@@ -1,20 +1,22 @@
 package org.jahia.modules.personalization.tracking;
 
+import org.jahia.modules.personalization.tracking.TrackingData;
+import org.jahia.modules.personalization.tracking.TrackingHelper;
+import org.jahia.modules.personalization.tracking.TrackingService;
 import org.jahia.modules.personalization.tracking.trackers.TrackerInterface;
-import org.jahia.services.render.RenderContext;
-import org.jahia.services.render.Resource;
-import org.jahia.services.render.filter.AbstractFilter;
-import org.jahia.services.render.filter.RenderChain;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Tracking filter class
  */
-public class TrackingFilter extends AbstractFilter {
-
+public class TrackingHandlerInterceptor extends HandlerInterceptorAdapter {
     private String trackingCookieName = "jahiaTrackingID";
 
     private String trackingSessionName = "org.jahia.modules.personalization.trackingData";
@@ -49,18 +51,22 @@ public class TrackingFilter extends AbstractFilter {
         this.trackers = trackers;
     }
 
-    @Override
-    public String prepare(RenderContext renderContext, Resource resource, RenderChain chain) throws Exception {
+    public static TrackingData getThreadLocalTrackingData() {
+        return trackingDataThreadLocal.get();
+    }
 
-        HttpSession session = renderContext.getRequest().getSession(false);
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+
+        HttpSession session = request.getSession(false);
         if (session == null) {
             // if no session is present, we don't do anything...
-            return super.prepare(renderContext, resource, chain);
+            return true;
         }
 
         TrackingData trackingData = (TrackingData) session.getAttribute(trackingSessionName);
         if (trackingData == null) {
-            Cookie[] cookies = renderContext.getRequest().getCookies();
+            Cookie[] cookies = request.getCookies();
             if (cookies != null) {
                 for (Cookie cookie : cookies) {
                     if (cookie.getName().equals(trackingCookieName)) {
@@ -78,35 +84,30 @@ public class TrackingFilter extends AbstractFilter {
                 Cookie trackingCookie = new Cookie(trackingCookieName, trackingData.getClientID());
                 trackingCookie.setMaxAge(Integer.MAX_VALUE);
                 trackingCookie.setPath("/");
-                renderContext.getResponse().addCookie(trackingCookie);
+                response.addCookie(trackingCookie);
             }
         }
 
         // now let's call all the trackers to update the trackingData structure.
         for (TrackerInterface tracker : trackers) {
-            if (!tracker.track(renderContext, resource, chain, trackingData)) {
+            if (!tracker.track(request, response, trackingData)) {
                 break;
             }
         }
 
         session.setAttribute(trackingSessionName, trackingData);
-        renderContext.getRequest().setAttribute(trackingSessionName, trackingData);
+        request.setAttribute(trackingSessionName, trackingData);
 
         trackingDataThreadLocal.set(trackingData);
 
-        return super.prepare(renderContext, resource, chain);    //To change body of overridden methods use File | Settings | File Templates.
+        return super.preHandle(request, response, handler);    //To change body of overridden methods use File | Settings | File Templates.
     }
 
     @Override
-    public String execute(String previousOut, RenderContext renderContext, Resource resource, RenderChain chain) throws Exception {
-        return super.execute(previousOut, renderContext, resource, chain);
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+        super.postHandle(request, response, handler, modelAndView);    //To change body of overridden methods use File | Settings | File Templates.
 
-    }
-
-    @Override
-    public void finalize(RenderContext renderContext, Resource resource, RenderChain renderChain) {
-        super.finalize(renderContext, resource, renderChain);
-        HttpSession session = renderContext.getRequest().getSession(false);
+        HttpSession session = request.getSession(false);
                 if (session == null) {
                     // if no session is present, we don't do anything...
                     return;
@@ -124,9 +125,5 @@ public class TrackingFilter extends AbstractFilter {
             // we have an invalid session, cannot do anything with it.
         }
         trackingDataThreadLocal.set(null);
-    }
-
-    public static TrackingData getThreadLocalTrackingData() {
-        return trackingDataThreadLocal.get();
     }
 }
