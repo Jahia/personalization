@@ -21,3 +21,69 @@
 .bodywrapper .personalizationbox .x-border{
 	border:none;
 }
+
+.panel_button {
+	margin-left: auto;
+	margin-right: auto;
+	position: absolute;
+	top: 1px;
+	width: 173px;
+	height: 54px;
+	background: url(images/panel/panel_button.png);
+	filter:alpha(opacity=70);
+	-moz-opacity:0.70;
+	-khtml-opacity: 0.70;
+	opacity: 0.70;
+	cursor: pointer;
+    z-index: 10000;
+}
+.panel_button img {
+	position: relative;
+	top: 10px;
+	border: none;
+}
+.panel_button a {
+	text-decoration: none;
+	color: #545454;
+	font-size: 20px;
+	font-weight: bold;
+	position: relative;
+	top: 5px;
+	left: 10px;
+	font-family: Arial, Helvetica, sans-serif;
+}
+.panel_button a:hover {
+	color: #999999;
+}
+
+#toppanel {
+	position: fixed;
+    top: 0px;
+	width: 900px;
+	left: 0px;
+	text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    z-index: 10000;
+}
+#panel {
+	width: 900px;
+	position: relative;
+	top: 1px;
+	height: 0px;
+	margin-left: auto;
+	margin-right: auto;
+	overflow: hidden;
+	text-align: left;
+}
+#panel_contents {
+	background: black;
+	filter:alpha(opacity=70);
+	-moz-opacity:0.70;
+	-khtml-opacity: 0.70;
+	opacity: 0.70;
+	height: 100%;
+	width: 904px;
+	position: absolute;
+    overflow: scroll;
+}
