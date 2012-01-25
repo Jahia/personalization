@@ -58,11 +58,7 @@ public class TrackingHandlerInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-        HttpSession session = request.getSession(false);
-        if (session == null) {
-            // if no session is present, we don't do anything...
-            return true;
-        }
+        HttpSession session = request.getSession();
 
         TrackingData trackingData = (TrackingData) session.getAttribute(trackingSessionName);
         if (trackingData == null) {

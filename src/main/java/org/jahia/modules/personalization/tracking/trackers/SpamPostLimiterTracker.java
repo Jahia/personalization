@@ -31,7 +31,7 @@ public class SpamPostLimiterTracker implements TrackerInterface {
             return true;
         }
 
-        if (request.getMethod().equalsIgnoreCase("post")) {
+        if (request.getMethod().equalsIgnoreCase("post") && request.getRequestURI().startsWith("/cms/render/live")) {
             Long lastPostMethodTime = trackingData.getLong("lastPostMethodTime");
             Double lastPostLoadAverage = trackingData.getDouble("lastPostLoadAverage");
             long now = System.currentTimeMillis();

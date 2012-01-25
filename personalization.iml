@@ -15,6 +15,7 @@
           <file>file://$MODULE_DIR$/src/main/resources/org/jahia/config/applicationcontext-tracking.xml</file>
           <file>file://$MODULE_DIR$/src/main/resources/org/jahia/defaults/config/personalization/servlet-applicationcontext-renderer-personalization.xml</file>
           <file>file://$MODULE_DIR$/src/main/resources/org/jahia/defaults/config/personalization/applicationcontext-personalization.xml</file>
+          <file>file://$MODULE_DIR$/src/main/resources/org/jahia/defaults/config/personalization/servlet-applicationcontext-gwt-personalization.xml</file>
         </fileset>
       </configuration>
     </facet>

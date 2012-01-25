@@ -53,6 +53,9 @@ public class TrackingController extends JahiaController {
 
     private void updateTrackingData(HttpServletRequest request, HttpServletResponse response) {
         TrackingData trackingData = (TrackingData) request.getSession().getAttribute(trackingSessionName);
+        if (trackingData == null) {
+            return;
+        }
 
         Map<String,String[]> parameterMap = (Map<String,String[]>) request.getParameterMap();
         for (Map.Entry<String,String[]> parameterMapEntry : parameterMap.entrySet()) {

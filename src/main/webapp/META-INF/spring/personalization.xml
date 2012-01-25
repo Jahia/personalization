@@ -21,6 +21,14 @@
         <property name="userManagerService" ref="JahiaUserManagerService"/>
     </bean>
 
+    <bean class="org.jahia.modules.personalization.UserPropertyChoicelistInitializer">
+        <property name="key" value="userProperties"/>
+    </bean>
+
+    <bean class="org.jahia.modules.personalization.tracking.TrackingDataChoiceListInitializer">
+        <property name="key" value="trackingDataProperties"/>
+    </bean>
+
     <!-- WURFL Java API Beans -->
 
     <!-- =================WURFL MODEL REPRESENTATION========================== -->
