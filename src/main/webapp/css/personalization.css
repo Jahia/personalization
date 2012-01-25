@@ -23,6 +23,7 @@
 }
 
 .panel_button {
+    display:inline;
     float:left;
     position: relative;
     background: black;
@@ -77,12 +78,22 @@
     z-index: 999;
 }
 #panel {
-	width: 0px;
+    display:inline;
+	width: 300px;
 	position: relative;
 	top: 0px;
-	height: 500px;
-	overflow: scroll;
 	text-align: left;
+    height: 700px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    scrollbar-base-color: #000000;
+    scrollbar-face-color: #000000;
+    scrollbar-track-color: #000000;
+    scrollbar-highlight-color: #000000;
+    scrollbar-3dlight-color: #000000;
+    scrollbar-shadow-color: #000000;
+    scrollbar-darkshadow-color: #000000;
+    scrollbar-arrow-color: #FF9900;
 }
 #panel .contents {
 	background: black;
@@ -98,8 +109,8 @@
 }
 
 #panel .contents h2 {
+    border-bottom: 1px solid #E0E0DC;
+    font-size: 1em;
     margin-top: 10px;
-    margin-bottom : 5px;
-    border-bottom: thin;
-    border-color: white;
+    margin-bottom: 5px;
 }

@@ -4,7 +4,11 @@
 <%@ page import="org.jahia.modules.personalization.tracking.TrackingData" %>
 <%@ page import="java.text.DateFormat" %>
 <%@ page import="org.jahia.utils.LanguageCodeConverters" %>
+<%@ page import="org.jahia.services.usermanager.JahiaUser" %>
 <%@ page import="java.util.*" %>
+<%@ page import="org.jahia.services.usermanager.UserProperties" %>
+<%@ page import="org.jahia.services.usermanager.UserProperty" %>
+<%@ page import="java.net.URI" %>
 <%@ taglib prefix="jcr" uri="http://www.jahia.org/tags/jcr" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -108,15 +112,26 @@
                         }
                     %>
                     <%
+                        long lastPostTime = trackingData.getLong("lastPostMethodTime");
+                        if (lastPostTime != -1) {
+                    %>
+                    <h2>Last contribution time</h2>
+                    <%
+                            String dateString = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, request.getLocale()).format(new Date(lastPostTime));
+                            out.println("<p>" + dateString + "</p>");
+                        }
+
                         Map<String, List<String>> trackingMap = trackingData.getTrackingMap();
                         List<String> userAgentList = trackingMap.get("user-agents");
                         if (userAgentList != null) {
                             out.println("<h2>Browsers</h2>");
+                            out.println("<table><tbody><tr>");
                             for (String userAgent : userAgentList) {
                                 Device device = wurfl.getDeviceForRequest(userAgent);
                                 String brandName = device.getCapability("brand_name");
-                                out.println("<img src=\"/modules/personalization/img/devices/" + brandName + ".png\"/>" + brandName);
+                                out.println("<td style=\"text-align:center\"><img src=\"/modules/personalization/img/devices/" + brandName + ".png\"/><br/>" + brandName + "<td>");
                             }
+                            out.println("</tr></tbody></table>");
                         }
 
                         List<String> locations = trackingData.getTrackingMap().get("locations");
@@ -181,6 +196,84 @@
                             out.println("<ul>");
                             for (String resolution : screenResolutions) {
                                 out.println("<li>" + resolution + "</li>");
+                            }
+                            out.println("</ul>");
+                        }
+
+                        List<String> windowsSizes = trackingData.getTrackingMap().get("windowSize");
+                        if (windowsSizes != null) {
+                    %>
+                    <h2>Window sizes</h2>
+                    <%
+                            out.println("<ul>");
+                            for (String windowSize : windowsSizes) {
+                                out.println("<li>" + windowSize + "</li>");
+                            }
+                            out.println("</ul>");
+                        }
+
+                        List<String> hosts = trackingData.getTrackingMap().get("hosts");
+                        if (hosts != null) {
+                    %>
+                    <h2>Source hosts</h2>
+                    <%
+                            out.println("<ul>");
+                            for (String host : hosts) {
+                                out.println("<li>" + host + "</li>");
+                            }
+                            out.println("</ul>");
+                        }
+                    %>
+                    <h2>User properties</h2>
+                    <%
+                        JahiaUser jahiaUser = (JahiaUser) pageContext.findAttribute("currentUser");
+                        UserProperties userProperties = jahiaUser.getUserProperties();
+                        out.println("<table>");
+                        out.println("<tbody>");
+                        out.println("<tr><td>User name</td><td>" + jahiaUser.getUsername() + "</td></tr>");
+                        out.println("<tr><td>First name</td><td>" + jahiaUser.getProperty("j:firstName") + "</td></tr>");
+                        out.println("<tr><td>Last name</td><td>" + jahiaUser.getProperty("j:lastName") + "</td></tr>");
+                        out.println("<tr><td>Organization</td><td>" + jahiaUser.getProperty("j:organization") + "</td></tr>");
+                        out.println("<tr><td>Email</td><td>" + jahiaUser.getProperty("j:email") + "</td></tr>");
+                        if (jahiaUser.getProperty("emailNotificationsDisabled") != null) {
+                            Boolean emailNotificationsDisabled = new Boolean(jahiaUser.getProperty("emailNotificationsDisabled"));
+                            out.println("<tr><td>Email notifications</td><td>" + !emailNotificationsDisabled.booleanValue() + "</td></tr>");
+                        }
+                        if (jahiaUser.getProperty("preferredLanguage") != null) {
+                            Locale locale = LanguageCodeConverters.languageCodeToLocale(jahiaUser.getProperty("preferredLanguage"));
+                            out.println("<tr><td>Preferred language</td><td>" + locale.getDisplayLanguage(request.getLocale()) + "</td></tr>");
+                        }
+                        out.println("</tbody></table>");
+                        Iterator<String> propertyNameIterator = userProperties.propertyNameIterator();
+                        out.println("<!--");
+                        while (propertyNameIterator.hasNext()) {
+                            UserProperty userProperty = userProperties.getUserProperty(propertyNameIterator.next());
+                            if (userProperty.getName().startsWith("jcr:")) {
+                            } else if (userProperty.getName().equals("j:originWS") ||
+                                    userProperty.getName().equals("j:external") ||
+                                    userProperty.getName().equals("j:published") ||
+                                    userProperty.getName().equals("j:lastPublishedBy") ||
+                                    userProperty.getName().equals("cookieauth")
+                                    ) {
+                            } else {
+                                out.println("" + userProperty.getName() + ":" + userProperty.getValue());
+                            }
+                        }
+                        out.println("-->");
+
+                        List<String> urls = trackingData.getTrackingMap().get("urls");
+                        if (urls != null) {
+                    %>
+                    <h2>Referers</h2>
+                    <%
+                            out.println("<ul>");
+                            for (String url : urls) {
+                                int colonPos = url.indexOf(":");
+                                if (colonPos > -1) {
+                                    String referer = url.substring(colonPos + 1);
+                                    URI refererURI = new URI(referer);
+                                    out.println("<li><a href=\"" + referer + "\" title=\""+referer+"\">"+refererURI.getHost()+"</a></li>");
+                                }
                             }
                             out.println("</ul>");
                         }
