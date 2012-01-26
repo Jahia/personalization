@@ -45,8 +45,8 @@
                 $.ajax({
                     type: 'POST',
                     url: '<c:url value="/cms/tracking"/>',
-                    data: { timeOnPage: clockStart + ";" + window.location + ';' + timeOnPage },
-                    async: false,
+                    data: { timeOnPage: clockStart + "::" + window.location + '::' + timeOnPage },
+                    async: false
                 });
             });
         </script>

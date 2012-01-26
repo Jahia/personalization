@@ -11,6 +11,7 @@
 <%@ page import="org.jahia.services.usermanager.UserProperty" %>
 <%@ page import="java.net.URI" %>
 <%@ page import="org.apache.jackrabbit.util.ISO8601" %>
+<%@ page import="java.text.DecimalFormat" %>
 <%@ taglib prefix="jcr" uri="http://www.jahia.org/tags/jcr" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -279,10 +280,13 @@
         Calendar calendar = ISO8601.parse(jahiaUser.getProperty("j:birthDate"));
         String birthDateString = DateFormat.getDateInstance(DateFormat.LONG, request.getLocale()).format(calendar.getTime());
         out.println("<tr><td>Birth date</td><td>" + birthDateString + "</td></tr>");
-        long nowTime = System.currentTimeMillis();
-        long birthTime = calendar.getTimeInMillis();
-        long age = (nowTime - birthTime) / (1000*60*60*24*365);
-        out.println("<tr><td>Age</td><td>" + age + "</td></tr>");
+        Calendar nowCalendar = Calendar.getInstance();
+        int years = -1;
+        while (!calendar.after(nowCalendar)) {
+            calendar.add(Calendar.YEAR, 1);
+            years++;
+        }
+        out.println("<tr><td>Age</td><td>" + years + "</td></tr>");
     }
     out.println("<tr><td>Bio</td><td>" + getPropValue(jahiaUser, "bio") + "</td></tr>" );
     if (jahiaUser.getProperty("website") != null) {
@@ -314,6 +318,51 @@
 
     out.println("-->");
 
+    List<String> timeOnPages = trackingData.getTrackingMap().get("timeOnPage");
+    if (timeOnPages != null) {
+%>
+<h2>Time on pages</h2>
+<%
+        Map<String,Double> totalTimeOnPage = new HashMap<String,Double>();
+        for (String timeOnPage : timeOnPages) {
+            String[] timeOnPageData = timeOnPage.split("::");
+            for (String timeOnPageDataElement : timeOnPageData) {
+                System.out.print(timeOnPageDataElement + ", ");
+            }
+            System.out.println("");
+            if (timeOnPageData.length == 3) {
+                Double existingTimeOnPage = totalTimeOnPage.get(timeOnPageData[1]);
+                if (existingTimeOnPage == null) {
+                    existingTimeOnPage = 0.0;
+                }
+                existingTimeOnPage += Double.parseDouble(timeOnPageData[2]);
+                totalTimeOnPage.put(timeOnPageData[1], existingTimeOnPage);
+            }
+        }
+
+        Map<Double, String> sortedTimeOnPage = new TreeMap<Double, String>(new Comparator<Double>() {
+            public int compare(Double first, Double second) {
+                return -first.compareTo(second);
+            }
+        });
+        for (Map.Entry<String,Double> totalTimeOnPageEntry : totalTimeOnPage.entrySet()) {
+            sortedTimeOnPage.put(totalTimeOnPageEntry.getValue(), totalTimeOnPageEntry.getKey());
+        }
+
+        out.println("<ul>");
+        for (Map.Entry<Double,String> sortedTimeOnPageEntry : sortedTimeOnPage.entrySet()) {
+            DecimalFormat decimalFormat = new DecimalFormat("##.#");
+            URI pageURI = new URI(sortedTimeOnPageEntry.getValue());
+            String path = pageURI.getPath();
+            int sitesPos = path.indexOf("/sites");
+            if (sitesPos > -1) {
+                path = path.substring(sitesPos);
+            }
+            out.println("<li>"+decimalFormat.format(sortedTimeOnPageEntry.getKey())+"&nbsp;secs&nbsp;<a href=\"" + sortedTimeOnPageEntry.getValue() + "\" title=\"" + sortedTimeOnPageEntry.getValue() + "\">" + path + "</a></li>");
+        }
+        out.println("</ul>");
+    }
+
     List<String> urls = trackingData.getTrackingMap().get("urls");
     if (urls != null) {
 %>
@@ -321,7 +370,7 @@
 <%
         out.println("<ul>");
         for (String url : urls) {
-            int colonPos = url.indexOf(":");
+            int colonPos = url.indexOf("::");
             if (colonPos > -1) {
                 String referer = url.substring(colonPos + 1);
                 URI refererURI = new URI(referer);
