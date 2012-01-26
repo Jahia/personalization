@@ -114,3 +114,15 @@
     margin-top: 10px;
     margin-bottom: 5px;
 }
+
+#panel .contents a:link {
+    color:white;
+}
+
+#panel .contents a:visited {
+    color:white;
+}
+
+#panel .contents a:hover {
+    color:yellow;
+}

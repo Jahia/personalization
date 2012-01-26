@@ -98,7 +98,11 @@
             String language = locale.getDisplayLanguage(request.getLocale());
             String country = locale.getDisplayCountry(request.getLocale());
             String variant = locale.getDisplayVariant(request.getLocale());
-            out.println("<p>" + language + " (" + country + ") " + variant + "</p>");
+            out.print("<p>" + language);
+            if (country != null && (!"".equals(country))) {
+                out.print(" (" + country + ")");
+            }
+            out.println(" " + variant + "</p>");
         }
     }
 %>
@@ -326,10 +330,6 @@
         Map<String,Double> totalTimeOnPage = new HashMap<String,Double>();
         for (String timeOnPage : timeOnPages) {
             String[] timeOnPageData = timeOnPage.split("::");
-            for (String timeOnPageDataElement : timeOnPageData) {
-                System.out.print(timeOnPageDataElement + ", ");
-            }
-            System.out.println("");
             if (timeOnPageData.length == 3) {
                 Double existingTimeOnPage = totalTimeOnPage.get(timeOnPageData[1]);
                 if (existingTimeOnPage == null) {
