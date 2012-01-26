@@ -67,10 +67,10 @@ public class TrackingService {
         return null;
     }
 
-    public boolean store(final TrackingData trackingData) {
+    public TrackingData store(final TrackingData trackingData) {
         try {
-            execute(new JCRCallback<Boolean>() {
-                public Boolean doInJCR(JCRSessionWrapper session) throws RepositoryException {
+            return execute(new JCRCallback<TrackingData>() {
+                public TrackingData doInJCR(JCRSessionWrapper session) throws RepositoryException {
                     TrackingData existingTrackingData = getByClientId(trackingData.getClientID());
                     TrackingData newTrackingData = trackingData;
                     JCRNodeWrapper targetTrackingNode = null;
@@ -86,17 +86,17 @@ public class TrackingService {
                         final JahiaUser jahiaUser = jahiaUserManagerService.lookupUserByKey(newTrackingData.getAssociatedUserKey());
                         if (jahiaUser != null) {
                             final String userJCRPath = jahiaUser.getLocalPath();
-                            storeUserTrackingData(session, userJCRPath, newTrackingData);
+                            newTrackingData = storeUserTrackingData(session, userJCRPath, newTrackingData);
                         }
                     }
                     session.save();
-                    return true;  //To change body of implemented methods use File | Settings | File Templates.
+                    return newTrackingData;  //To change body of implemented methods use File | Settings | File Templates.
                 }
             });
         } catch (RepositoryException re) {
             logger.error("Error retrieving storing tracking data for id " + trackingData.getClientID(), re);
         }
-        return true;
+        return null;
     }
 
     public TrackingData getUserTrackingData(final String userKey) {
@@ -127,33 +127,38 @@ public class TrackingService {
         return null;
     }
 
-    public void storeUserTrackingData(final String userKey, final TrackingData trackingData) {
+    public TrackingData storeUserTrackingData(final String userKey, final TrackingData trackingData) {
         final JahiaUser jahiaUser = jahiaUserManagerService.lookupUserByKey(userKey);
 
         final String userJCRPath = jahiaUser.getLocalPath();
 
         try {
-            execute(new JCRCallback<Boolean>() {
-                public Boolean doInJCR(JCRSessionWrapper session) throws RepositoryException {
-                    TrackingService.this.storeUserTrackingData(session, userJCRPath, trackingData);
+            return execute(new JCRCallback<TrackingData>() {
+                public TrackingData doInJCR(JCRSessionWrapper session) throws RepositoryException {
+                    TrackingData newTrackingData  = TrackingService.this.storeUserTrackingData(session, userJCRPath, trackingData);
                     session.save();
-                    return true;
+                    return newTrackingData;
                 }
             });
         } catch (RepositoryException re) {
             logger.error("Error while retrieving tracking data for user " + userKey, re);
         }
+        return null;
     }
 
-    private void storeUserTrackingData(JCRSessionWrapper session, String userJCRPath, TrackingData trackingData) throws RepositoryException {
+    private TrackingData storeUserTrackingData(JCRSessionWrapper session, String userJCRPath, TrackingData trackingData) throws RepositoryException {
         JCRNodeWrapper userNode = session.getNode(userJCRPath);
         JCRNodeWrapper userTrackingDataNode = null;
+        TrackingData newTrackingData = trackingData;
         if (!userNode.hasNode("trackingData")) {
             userTrackingDataNode = userNode.addNode("trackingData", "jnt:trackingData");
         } else {
             userTrackingDataNode = userNode.getNode("trackingData");
+            TrackingData existingUserTrackingData = new TrackingData(userTrackingDataNode, ignoredProperties);
+            newTrackingData = existingUserTrackingData.merge(trackingData);
         }
-        trackingData.toJCRNode(userTrackingDataNode, ignoredProperties);
+        newTrackingData.toJCRNode(userTrackingDataNode, ignoredProperties);
+        return newTrackingData;
     }
 
     // Private methods

@@ -118,7 +118,10 @@
 
 [jnt:trackingDataViewer] > jnt:content, jmix:personalizationComponents
 
-[jnt:trackingDataUpdater] > jnt:content, jmix:personalizationComponents
-
 [jnt:trackingDataReport] > jnt:content, jmix:personalizationComponents
-- j:mapKey (string)
+
+[jnt:ajaxWindowAndScreenSizeTracker] > jnt:content, jmix:personalizationComponents
+
+[jnt:ajaxHTML5LocationTracker] > jnt:content, jmix:personalizationComponents
+
+[jnt:ajaxTimeOnPageTracker] > jnt:content, jmix:personalizationComponents

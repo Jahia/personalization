@@ -21,9 +21,9 @@
 <c:choose>
     <c:when test="${renderContext.editMode}">
         <div class="personalizationbox">
-            <h4><fmt:message key="label.trackingDataUpdater"/></h4>
+            <h4><fmt:message key="label.ajaxHTML5LocationTracker"/></h4>
 
-            <p><fmt:message key="label.trackingDataUpdater.componentDescription"/></p>
+            <p><fmt:message key="label.ajaxHTML5LocationTracker.componentDescription"/></p>
         </div>
     </c:when>
 
@@ -39,9 +39,6 @@
             }
 
             $(document).ready(function() {
-                $.post('<c:url value="/cms/tracking"/>', { screenResolution : window.screen.width + "x" + window.screen.height,
-                    windowSize: window.innerWidth + "x" + window.innerHeight });
-
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(success, error);
                 } else {
