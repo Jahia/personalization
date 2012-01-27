@@ -7,6 +7,7 @@ $(document).ready(function() {
 			width: "300px"
 		}, "fast");
 		$("div.panel_button").toggle();
+        $("div.contents").toggle();
 
 	});
 

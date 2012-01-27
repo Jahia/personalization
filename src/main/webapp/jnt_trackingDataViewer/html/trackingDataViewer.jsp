@@ -85,7 +85,8 @@
 <div class="panel_button" id="hide_button" style="display: none;"><img
         src="/modules/personalization/img/panel/collapse.png" alt="collapse"/> <a href="#"></a></div>
 <div id="panel">
-<div class="contents">
+<div class="contents" style="display: none;">
+ <div class="contentsscroll">
 
 <%
     List<String> locales = trackingData.getTrackingMap().get("locales");
@@ -380,6 +381,7 @@
         out.println("</ul>");
     }
 %>
+</div>
 </div>
 </div>
 </div>
