@@ -372,7 +372,7 @@
         for (String url : urls) {
             int colonPos = url.indexOf("::");
             if (colonPos > -1) {
-                String referer = url.substring(colonPos + 1);
+                String referer = url.substring(colonPos + 2);
                 URI refererURI = new URI(referer);
                 out.println("<li><a href=\"" + referer + "\" title=\"" + referer + "\">" + refererURI.getHost() + "</a></li>");
             }
