@@ -85,6 +85,8 @@
 [jnt:userPropertyValueExpression] > jnt:expression, jmix:personalizationComponents
  - j:propertyName (string, choicelist[userProperties])
 
+[jnt:userAgePropertyValueExpression] > jnt:expression, jmix:personalizationComponents
+
 [jnt:locationValueExpression] > jnt:expression, jmix:personalizationComponents
  - j:latitude (double)
  - j:longitude (double)
