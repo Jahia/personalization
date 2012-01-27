@@ -87,7 +87,7 @@ public class TrackingEventListener implements ApplicationListener {
 
                 TrackingData userTrackingData = trackingService.getUserTrackingData(loginEvent.getJahiaUser().getUserKey());
                 if (userTrackingData != null) {
-                    trackingData.merge(userTrackingData);
+                    trackingData = userTrackingData.merge(trackingData);
                 }
             }
         } else if (event instanceof Logout.LogoutEvent) {

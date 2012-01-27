@@ -52,7 +52,7 @@ public class TrackingService {
                         if (trackingData.getAssociatedUserKey() != null) {
                             TrackingData userTrackingData = getUserTrackingData(trackingData.getAssociatedUserKey());
                             if (userTrackingData != null) {
-                                trackingData.merge(userTrackingData);
+                                trackingData = userTrackingData.merge(trackingData);
                             }
                         }
                         return trackingData;

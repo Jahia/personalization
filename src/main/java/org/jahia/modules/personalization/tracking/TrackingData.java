@@ -1,6 +1,8 @@
 package org.jahia.modules.personalization.tracking;
 
 import org.jahia.services.content.JCRNodeWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.*;
 import java.io.Serializable;
@@ -13,6 +15,8 @@ import java.util.Map;
  * Main class for all tracking data
  */
 public class TrackingData implements Serializable, Cloneable {
+
+    private static Logger logger = LoggerFactory.getLogger(TrackingData.class);
 
     private String storageID;
     private String clientID;
@@ -122,6 +126,11 @@ public class TrackingData implements Serializable, Cloneable {
         this.trackingMap = trackingMap;
     }
 
+    public String getActiveValue(String mapKey) {
+        List<String> stringList = trackingMap.get(mapKey);
+        return stringList.get(stringList.size()-1);
+    }
+
     public Long getLong(String mapKey) {
         String longStr = getSingleValue(mapKey);
         if (longStr != null) {
@@ -164,37 +173,51 @@ public class TrackingData implements Serializable, Cloneable {
             stringList = new ArrayList<String>();
         }
         if (stringList.contains(newValue)) {
-            return;
+            stringList.remove(newValue);
+            // we remove the value because we want the latest value to always be inserted at the end of the list.
         }
         stringList.add(newValue);
         trackingMap.put(mapKey, stringList);
     }
 
     /**
-     * Use this method to merge tracking data from another object into this one. This method will only merge
+     * Use this method to merge tracking data from another object into a new one. This method will only merge
      * the tracking map, not other fields. For the moment these objects do not track removals so we simply add
      * all values.
+     *
+     * This method does not modify this object, but creates a clone and merges into the clone. The result is then
+     * returned
+     *
+     * The pattern of usage for this method should always be newTrackingData = oldTrackingData.merge(newTrackingData)
+     * because of the active element being the last one and it should remain so.
      * @param otherTrackingData
-     * @return
+     * @return the merge result.
      */
     public TrackingData merge(TrackingData otherTrackingData) {
         Map<String,List<String>> otherTrackingMap = otherTrackingData.getTrackingMap();
+        TrackingData resultTrackingData = null;
+        try {
+            resultTrackingData = (TrackingData) clone();
+        } catch (CloneNotSupportedException cnse) {
+            logger.error("Cannot clone tracking data", cnse);
+            return null;
+        }
         for (Map.Entry<String,List<String>> otherTrackingMapEntry : otherTrackingMap.entrySet()) {
-            if (trackingMap.containsKey(otherTrackingMapEntry.getKey())) {
+            if (resultTrackingData.getTrackingMap().containsKey(otherTrackingMapEntry.getKey())) {
                 // we already have this entry, we must merge the lists.
-                List<String> ourList = trackingMap.get(otherTrackingMapEntry.getKey());
+                List<String> ourList = resultTrackingData.getTrackingMap().get(otherTrackingMapEntry.getKey());
                 List<String> otherList = otherTrackingMapEntry.getValue();
                 for (String otherString : otherList) {
                     if (!ourList.contains(otherString)) {
                         ourList.add(otherString);
                     }
                 }
-                trackingMap.put(otherTrackingMapEntry.getKey(), ourList);
+                resultTrackingData.getTrackingMap().put(otherTrackingMapEntry.getKey(), ourList);
             } else {
-                trackingMap.put(otherTrackingMapEntry.getKey(), otherTrackingMapEntry.getValue());
+                resultTrackingData.getTrackingMap().put(otherTrackingMapEntry.getKey(), otherTrackingMapEntry.getValue());
             }
         }
-        return this;
+        return resultTrackingData;
     }
 
     // Private methods
