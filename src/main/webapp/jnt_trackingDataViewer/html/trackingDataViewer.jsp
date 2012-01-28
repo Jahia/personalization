@@ -80,12 +80,14 @@
 <c:otherwise>
 <!-- display nothing -->
 <div id="toppanel">
-<div class="panel_button" style="display: block;"><img src="/modules/personalization/img/panel/expand.png"
-                                                       alt="expand"/> <a href="#"></a></div>
-<div class="panel_button" id="hide_button" style="display: none;"><img
-        src="/modules/personalization/img/panel/collapse.png" alt="collapse"/> <a href="#"></a></div>
+<div class="panel_button" style="display: inline;">
+    <img height="32" width="32" src="/modules/personalization/img/panel/expand.png" alt="expand"/> <a href="#"></a>
+</div>
+<div class="panel_button" id="hide_button" style="display: none;">
+    <img height="32" width="32" src="/modules/personalization/img/panel/collapse.png" alt="collapse"/> <a href="#"></a>
+</div>
 <div id="panel">
-<div class="contents" style="display: none;">
+<div class="contents">
  <div class="contentsscroll">
 
 <%

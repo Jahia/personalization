@@ -1,19 +1,18 @@
 $(document).ready(function() {
 	$("div.panel_button").click(function(){
-		$("div#panel").animate({
-			width: "400px"
+		$("div#toppanel").animate({
+			right: "100px"
 		})
 		.animate({
-			width: "300px"
+			right: "0px"
 		}, "fast");
 		$("div.panel_button").toggle();
-        $("div.contents").toggle();
 
 	});
 
    $("div#hide_button").click(function(){
-		$("div#panel").animate({
-			width: "0px"
+		$("div#toppanel").animate({
+			right: "-300px"
 		}, "fast");
 
 
