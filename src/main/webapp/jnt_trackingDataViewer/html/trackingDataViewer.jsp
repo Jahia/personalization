@@ -48,8 +48,10 @@
                 <tr>
                     <td><c:out value="${entry.key}"/></td>
                     <td>
-                        <c:forEach var="listEntry" items="${entry.value}">
+                        <c:forEach var="listEntry" items="${entry.value}" varStatus="listStatus">
+                            <c:if test="${listStatus.last}"><b></c:if>
                             <c:out value="${listEntry}"/> <br/>
+                            <c:if test="${listStatus.last}"></b></c:if>
                         </c:forEach>
                     </td>
                 </tr>

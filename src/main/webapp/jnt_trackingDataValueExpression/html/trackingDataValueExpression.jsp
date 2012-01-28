@@ -6,5 +6,8 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set value="${sessionScope['org.jahia.modules.personalization.trackingData']}" var="trackingData"/>
 <jcr:nodeProperty node="${currentNode}" name="j:propertyName" var="propertyName"/>
-<c:set var="jahiaComponentExpression" value="${trackingData.trackingMap[propertyName.string]}" scope="request" />
+<c:set var="trackingList" value="${trackingData.trackingMap[propertyName.string]}" />
+<c:if test="${not empty trackingList}">
+    <c:set var="jahiaComponentExpression" value="${trackingList[fn:length(trackingList)-1]}" scope="request" />
+</c:if>
 <c:if test="${renderContext.editMode}">Tracking data ${propertyName.string} = ${jahiaComponentExpression}</c:if>
