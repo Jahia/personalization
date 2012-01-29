@@ -16,6 +16,8 @@ import java.util.Map;
  */
 public class TrackingData implements Serializable, Cloneable {
 
+    private static final long serialVersionUID = 1L;
+
     private static Logger logger = LoggerFactory.getLogger(TrackingData.class);
 
     private String storageID;
@@ -167,7 +169,7 @@ public class TrackingData implements Serializable, Cloneable {
         }
     }
 
-    public void addStringToSet(String mapKey, String newValue) {
+    public synchronized void addStringToSet(String mapKey, String newValue) {
         List<String> stringList = trackingMap.get(mapKey);
         if (stringList == null) {
             stringList = new ArrayList<String>();
