@@ -12,6 +12,7 @@
 <%@ page import="java.net.URI" %>
 <%@ page import="org.apache.jackrabbit.util.ISO8601" %>
 <%@ page import="java.text.DecimalFormat" %>
+<%@ page import="javax.servlet.jsp.jstl.core.LoopTagStatus" %>
 <%@ taglib prefix="jcr" uri="http://www.jahia.org/tags/jcr" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -92,25 +93,131 @@
 <div class="contents">
  <div class="contentsscroll">
 
-<%
-    List<String> locales = trackingData.getTrackingMap().get("locales");
-    if (locales != null) {
-%>
-<h2>Browser Languages</h2>
-<%
-        for (String localeStr : locales) {
-            Locale locale = LanguageCodeConverters.languageCodeToLocale(localeStr);
-            String language = locale.getDisplayLanguage(request.getLocale());
-            String country = locale.getDisplayCountry(request.getLocale());
-            String variant = locale.getDisplayVariant(request.getLocale());
-            out.print("<p>" + language);
-            if (country != null && (!"".equals(country))) {
-                out.print(" (" + country + ")");
-            }
-            out.println(" " + variant + "</p>");
+    <%
+        JahiaUser jahiaUser = (JahiaUser) pageContext.findAttribute("currentUser");
+        UserProperties userProperties = jahiaUser.getUserProperties();
+    %>
+    <h2>User</h2>
+    <table>
+        <tbody>
+        <tr>
+            <td style="text-align:center">
+                <jcr:node var="userNode" path="${currentUser.localPath}"/>
+                <jcr:nodeProperty var="picture" node="${userNode}" name="j:picture"/>
+                <c:if test="${not empty picture}">
+                    <img class='user-profile-img userProfileImage' src="${picture.node.thumbnailUrls['avatar_120']}"
+                         alt="${fn:escapeXml(title)} ${fn:escapeXml(firstname)} ${fn:escapeXml(lastname)}" width="60"
+                         height="60"/>
+                </c:if>
+                <c:if test="${empty picture}">
+                    <img class='user-profile-img' src="<c:url value='${url.currentModule}/img/usersmall.png'/>" alt=""
+                         border="0" width="32"
+                         height="32"/>
+                </c:if>
+                <br/>
+                <%=jahiaUser.getUsername()%>
+            </td>
+            <td><%=getPropValue(jahiaUser,"j:firstName")%> <%=getPropValue(jahiaUser,"j:lastName")%>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <%
+        out.println("<table>");
+        out.println("<tbody>");
+        if (jahiaUser.getProperty("j:organization") != null) {
+            out.println("<tr><td>Organization</td><td>" + getPropValue(jahiaUser, "j:organization") + "</td></tr>");
         }
-    }
+        if (jahiaUser.getProperty("j:email") != null) {
+            out.println("<tr><td>Email</td><td>" + getPropValue(jahiaUser, "j:email") + "</td></tr>");
+        }
+        if (jahiaUser.getProperty("emailNotificationsDisabled") != null) {
+            Boolean emailNotificationsDisabled = new Boolean(jahiaUser.getProperty("emailNotificationsDisabled"));
+            out.println("<tr><td>Email notifications</td><td>" + !emailNotificationsDisabled.booleanValue() + "</td></tr>");
+        }
+        if (jahiaUser.getProperty("preferredLanguage") != null) {
+            Locale locale = LanguageCodeConverters.languageCodeToLocale(jahiaUser.getProperty("preferredLanguage"));
+            out.println("<tr><td>Preferred language</td><td>" + locale.getDisplayLanguage(request.getLocale()) + "</td></tr>");
+        }
+        if (jahiaUser.getProperty("j:birthDate") != null) {
+            Calendar calendar = ISO8601.parse(jahiaUser.getProperty("j:birthDate"));
+            String birthDateString = DateFormat.getDateInstance(DateFormat.LONG, request.getLocale()).format(calendar.getTime());
+            out.println("<tr><td>Birth date</td><td>" + birthDateString + "</td></tr>");
+            Calendar nowCalendar = Calendar.getInstance();
+            int years = -1;
+            while (!calendar.after(nowCalendar)) {
+                calendar.add(Calendar.YEAR, 1);
+                years++;
+            }
+            out.println("<tr><td>Age</td><td>" + years + "</td></tr>");
+        }
+        if (jahiaUser.getProperty("bio") != null) {
+            out.println("<tr><td>Bio</td><td>" + getPropValue(jahiaUser, "bio") + "</td></tr>" );
+        }
+        if (jahiaUser.getProperty("website") != null) {
+            String[] websites = getPropValue(jahiaUser, "website").split("\n");
+            out.println("<tr><td>Web site(s)</td><td>");
+            for (String website : websites) {
+                out.println("<a href=\"" + website + "\" title=\"" + website + "\">" + website + "</a>");
+            }
+            out.println("</td></tr>");
+        }
+        if (jahiaUser.getProperty("hometown") != null) {
+            out.println("<tr><td>Home town</td><td>" + getPropValue(jahiaUser, "hometown") + "</td></tr>" );
+        }
+        out.println("</tbody></table>");
+        Iterator<String> propertyNameIterator = userProperties.propertyNameIterator();
+        out.println("<!--");
+        while (propertyNameIterator.hasNext()) {
+            UserProperty userProperty = userProperties.getUserProperty(propertyNameIterator.next());
+            out.println("" + userProperty.getName() + ":" + userProperty.getValue());
+        }
+        if (jahiaUser instanceof JahiaExternalUser) {
+            out.println("External user properties: ");
+            JahiaExternalUser jahiaExternalUser = (JahiaExternalUser) jahiaUser;
+            UserProperties externalUserProperties = jahiaExternalUser.getExternalProperties();
+            Iterator<String> externalUserPropertyNameIterator = externalUserProperties.propertyNameIterator();
+            while (externalUserPropertyNameIterator.hasNext()) {
+                UserProperty externalUserProperty = externalUserProperties.getUserProperty(externalUserPropertyNameIterator.next());
+                out.println("" + externalUserProperty.getName() + ":" + externalUserProperty.getValue());
+            }
+        }
+
+        out.println("-->");
 %>
+ <c:if test="${not empty locales}">
+<h2>Browser Languages</h2>
+     <c:forEach var="localeStr" items="${locales}" varStatus="listStatus">
+<%
+        String localeStr = (String) pageContext.findAttribute("localeStr");
+        LoopTagStatus loopTagStatus = (LoopTagStatus) pageContext.findAttribute("listStatus");
+        Locale locale = LanguageCodeConverters.languageCodeToLocale(localeStr);
+        String language = locale.getDisplayLanguage(request.getLocale());
+        String country = locale.getDisplayCountry(request.getLocale());
+        String variant = locale.getDisplayVariant(request.getLocale());
+        out.print("<p>");
+    if (loopTagStatus.isLast()) { out.print("<b>"); };
+        out.print(language);
+        if (country != null && (!"".equals(country))) {
+            out.print(" (" + country + ")");
+        }
+        out.print(" " + variant);
+    if (loopTagStatus.isLast()) { out.print("</b>"); };
+    out.println("</p>");
+%>
+     </c:forEach>
+ </c:if>
+<c:if test="${not empty trackingMap['operating-system']}">
+    <h2>Operating systems</h2>
+    <c:set var="operatingSystems" value="${trackingMap['operating-system']}"/>
+    <c:forEach var="operatingSystem" items="${operatingSystems}" varStatus="listStatus">
+        <p>
+         <c:if test="${listStatus.last}"><b></c:if>
+         <c:out value="${operatingSystem}" />
+         <c:if test="${listStatus.last}"></b></c:if>
+        </p>
+    </c:forEach>
+</c:if>
 <%
 
     Long lastAccessTime = trackingData.getLong("lastAccessTime");
@@ -244,89 +351,6 @@
     }
 %>
 <%
-    JahiaUser jahiaUser = (JahiaUser) pageContext.findAttribute("currentUser");
-    UserProperties userProperties = jahiaUser.getUserProperties();
-%>
-<h2>User properties</h2>
-<table>
-    <tbody>
-    <tr>
-        <td style="text-align:center">
-            <jcr:node var="userNode" path="${currentUser.localPath}"/>
-            <jcr:nodeProperty var="picture" node="${userNode}" name="j:picture"/>
-            <c:if test="${not empty picture}">
-                <img class='user-profile-img userProfileImage' src="${picture.node.thumbnailUrls['avatar_120']}"
-                     alt="${fn:escapeXml(title)} ${fn:escapeXml(firstname)} ${fn:escapeXml(lastname)}" width="60"
-                     height="60"/>
-            </c:if>
-            <c:if test="${empty picture}">
-                <img class='user-profile-img' src="<c:url value='${url.currentModule}/img/usersmall.png'/>" alt=""
-                     border="0" width="32"
-                     height="32"/>
-            </c:if>
-            <br/>
-            <%=jahiaUser.getUsername()%>
-        </td>
-        <td><%=getPropValue(jahiaUser,"j:firstName")%> <%=getPropValue(jahiaUser,"j:lastName")%>
-        </td>
-    </tr>
-    </tbody>
-</table>
-<%
-    out.println("<table>");
-    out.println("<tbody>");
-    out.println("<tr><td>Organization</td><td>" + getPropValue(jahiaUser, "j:organization") + "</td></tr>");
-    out.println("<tr><td>Email</td><td>" + getPropValue(jahiaUser, "j:email") + "</td></tr>");
-    if (jahiaUser.getProperty("emailNotificationsDisabled") != null) {
-        Boolean emailNotificationsDisabled = new Boolean(jahiaUser.getProperty("emailNotificationsDisabled"));
-        out.println("<tr><td>Email notifications</td><td>" + !emailNotificationsDisabled.booleanValue() + "</td></tr>");
-    }
-    if (jahiaUser.getProperty("preferredLanguage") != null) {
-        Locale locale = LanguageCodeConverters.languageCodeToLocale(jahiaUser.getProperty("preferredLanguage"));
-        out.println("<tr><td>Preferred language</td><td>" + locale.getDisplayLanguage(request.getLocale()) + "</td></tr>");
-    }
-    if (jahiaUser.getProperty("j:birthDate") != null) {
-        Calendar calendar = ISO8601.parse(jahiaUser.getProperty("j:birthDate"));
-        String birthDateString = DateFormat.getDateInstance(DateFormat.LONG, request.getLocale()).format(calendar.getTime());
-        out.println("<tr><td>Birth date</td><td>" + birthDateString + "</td></tr>");
-        Calendar nowCalendar = Calendar.getInstance();
-        int years = -1;
-        while (!calendar.after(nowCalendar)) {
-            calendar.add(Calendar.YEAR, 1);
-            years++;
-        }
-        out.println("<tr><td>Age</td><td>" + years + "</td></tr>");
-    }
-    out.println("<tr><td>Bio</td><td>" + getPropValue(jahiaUser, "bio") + "</td></tr>" );
-    if (jahiaUser.getProperty("website") != null) {
-        String[] websites = getPropValue(jahiaUser, "website").split("\n");
-        out.println("<tr><td>Web site(s)</td><td>");
-        for (String website : websites) {
-            out.println("<a href=\"" + website + "\" title=\"" + website + "\">" + website + "</a>");
-        }
-        out.println("</td></tr>");
-    }
-    out.println("<tr><td>Home town</td><td>" + getPropValue(jahiaUser, "hometown") + "</td></tr>" );
-    out.println("</tbody></table>");
-    Iterator<String> propertyNameIterator = userProperties.propertyNameIterator();
-    out.println("<!--");
-    while (propertyNameIterator.hasNext()) {
-        UserProperty userProperty = userProperties.getUserProperty(propertyNameIterator.next());
-        out.println("" + userProperty.getName() + ":" + userProperty.getValue());
-    }
-    if (jahiaUser instanceof JahiaExternalUser) {
-        out.println("External user properties: ");
-        JahiaExternalUser jahiaExternalUser = (JahiaExternalUser) jahiaUser;
-        UserProperties externalUserProperties = jahiaExternalUser.getExternalProperties();
-        Iterator<String> externalUserPropertyNameIterator = externalUserProperties.propertyNameIterator();
-        while (externalUserPropertyNameIterator.hasNext()) {
-            UserProperty externalUserProperty = externalUserProperties.getUserProperty(externalUserPropertyNameIterator.next());
-            out.println("" + externalUserProperty.getName() + ":" + externalUserProperty.getValue());
-        }
-    }
-
-    out.println("-->");
-
     List<String> timeOnPages = trackingData.getTrackingMap().get("timeOnPage");
     if (timeOnPages != null) {
 %>

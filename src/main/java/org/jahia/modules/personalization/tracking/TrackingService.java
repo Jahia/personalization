@@ -52,6 +52,7 @@ public class TrackingService {
                         if (trackingData.getAssociatedUserKey() != null) {
                             TrackingData userTrackingData = getUserTrackingData(trackingData.getAssociatedUserKey());
                             if (userTrackingData != null) {
+                                logger.info("Merging user tracking data for user " + trackingData.getAssociatedUserKey());
                                 trackingData = userTrackingData.merge(trackingData);
                             }
                         }
@@ -147,6 +148,7 @@ public class TrackingService {
     }
 
     private TrackingData storeUserTrackingData(JCRSessionWrapper session, String userJCRPath, TrackingData trackingData) throws RepositoryException {
+        logger.info("Storing user tracking data at " + userJCRPath);
         JCRNodeWrapper userNode = session.getNode(userJCRPath);
         JCRNodeWrapper userTrackingDataNode = null;
         TrackingData newTrackingData = trackingData;
