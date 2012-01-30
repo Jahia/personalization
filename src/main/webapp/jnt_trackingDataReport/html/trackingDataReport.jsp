@@ -47,6 +47,7 @@
         accumulatedTrackingData.accumulateForKey("operatingSystems", trackingData.getTrackingMap().get("operating-system"));
         accumulatedTrackingData.accumulateForKey("screenResolutions", trackingData.getTrackingMap().get("screenResolution"));
         accumulatedTrackingData.accumulateForKey("windowSizes", trackingData.getTrackingMap().get("windowSize"));
+        accumulatedTrackingData.accumulateForKey("locations", trackingData.getTrackingMap().get("locations"));
 
     %>
 </c:forEach>
@@ -108,6 +109,35 @@
         </c:forEach>
     </tbody>
 </table>
+<h3>Locations</h3>
+<div id="map_canvas${currentNode.identifier}" style="width:100%; height: 200px">
+</div>
+<script type="text/javascript">
+
+    function initReportMap() {
+<c:forEach var="locationEntry" items="${accumulatedTrackingData.accumulatedData['locations']}" varStatus="listStatus">
+        <c:set var="position" value="${fn:split(locationEntry.key, ',')}" />
+        var latlng${listStatus.count} = new google.maps.LatLng('${position[0]}', '${position[1]}');
+</c:forEach>
+        var myOptions = {
+            zoom: 15,
+            center: latlng1,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(document.getElementById("map_canvas${currentNode.identifier}"), myOptions);
+
+<c:forEach var="locationEntry" items="${accumulatedTrackingData.accumulatedData['locations']}" varStatus="listStatus">
+        var marker${listStatus.count} = new google.maps.Marker({
+            position: latlng${listStatus.count},
+            map: map,
+            title:"Location ${listStatus.count}"
+        });
+</c:forEach>
+    }
+    $(document).ready(function() {
+        initReportMap();
+    });
+</script>
 
 <!--
 <c:forEach items="${lastTrackingData.nodes}" var="curNode" varStatus="listStatus">
