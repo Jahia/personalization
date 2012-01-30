@@ -85,9 +85,12 @@ public class TrackingHandlerInterceptor extends HandlerInterceptorAdapter {
         }
 
         // now let's call all the trackers to update the trackingData structure.
+        boolean interrupted = false;
+
         for (TrackerInterface tracker : trackers) {
             if (!tracker.track(request, response, trackingData)) {
-                return false;
+                interrupted = true;
+                break;
             }
         }
 
@@ -96,7 +99,11 @@ public class TrackingHandlerInterceptor extends HandlerInterceptorAdapter {
 
         trackingDataThreadLocal.set(trackingData);
 
-        return super.preHandle(request, response, handler);    //To change body of overridden methods use File | Settings | File Templates.
+        if (interrupted) {
+            return false;
+        } else {
+            return super.preHandle(request, response, handler);    //To change body of overridden methods use File | Settings | File Templates.
+        }
     }
 
     @Override

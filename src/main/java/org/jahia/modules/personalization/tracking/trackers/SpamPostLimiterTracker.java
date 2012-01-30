@@ -4,6 +4,8 @@ import org.jahia.modules.personalization.tracking.TrackingData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -55,16 +57,21 @@ public class SpamPostLimiterTracker implements TrackerInterface {
                     lastPostLoadAverage = 0.0;
                 }
                 lastPostLoadAverage = lastPostLoadAverage * Math.exp(-calcFreqDouble / (60.0 * timeInMinutes)) + (5 / (elapsedTimeInSeconds)) * (1 - Math.exp(-calcFreqDouble / (60.0 * timeInMinutes)));
+                logger.debug("Last post load average for tracking data " + trackingData.getClientID() + " = " + lastPostLoadAverage);
                 trackingData.setDouble("lastPostLoadAverage", lastPostLoadAverage);
 
                 if (lastPostLoadAverage > lastPostLoadAverageLimit) {
                     // we have detected possible spam activity
                     logger.warn("Possible spam posting detected by user " + trackingData.getAssociatedUserKey() + " from ip " + request.getRemoteAddr() + " with session " + request.getSession().getId());
                     try {
-                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Too many submissions from the same user in a short amount of time, suspecting spamming.");
+                        trackingData.setLong("lastPostMethodTime", now);
+                        RequestDispatcher requestDispatcher = request.getRequestDispatcher("/modules/personalization/WEB-INF/spam-error.jsp");
+                        requestDispatcher.forward(request, response);
                         return false;
                     } catch (IOException ioe) {
                         logger.error("Error sending response error status ", ioe);
+                    } catch (ServletException se) {
+                        logger.error("Error display error message", se);
                     }
                 }
 
