@@ -35,6 +35,10 @@ public class TrackingService {
         this.ignoredProperties = ignoredProperties;
     }
 
+    public List<String> getIgnoredProperties() {
+        return ignoredProperties;
+    }
+
     public TrackingData getByClientId(final String trackingClientId) {
         try {
             execute(new JCRCallback<TrackingData>() {
