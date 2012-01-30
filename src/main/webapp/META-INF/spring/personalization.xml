@@ -63,6 +63,13 @@
                 <value>j:external</value>
                 <value>j:externalSource</value>
                 <value>j:publicProperties</value>
+                <value>j:originWS</value>
+                <value>j:nodename</value>
+                <value>j:displayableName</value>
+                <value>jcr:baseVersion</value>
+                <value>jcr:versionHistory</value>
+                <value>jcr:primaryType</value>
+                <value>jcr:isCheckedOut</value>
             </set>
         </property>
     </bean>

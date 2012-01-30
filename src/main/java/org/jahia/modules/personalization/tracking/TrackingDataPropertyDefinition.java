@@ -1,13 +1,16 @@
 package org.jahia.modules.personalization.tracking;
 
+import java.io.Serializable;
+
 /**
  * Definition of a tracking data property
  */
-public class TrackingDataPropertyDefinition {
+public class TrackingDataPropertyDefinition implements Serializable, Cloneable {
 
     private String name;
     private boolean timestamped = false;
     private boolean multivalued = true;
+    private long maxValues = 100;
 
     public String getName() {
         return name;
@@ -31,5 +34,13 @@ public class TrackingDataPropertyDefinition {
 
     public void setMultivalued(boolean multivalued) {
         this.multivalued = multivalued;
+    }
+
+    public long getMaxValues() {
+        return maxValues;
+    }
+
+    public void setMaxValues(long maxValues) {
+        this.maxValues = maxValues;
     }
 }

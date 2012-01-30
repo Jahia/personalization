@@ -16,12 +16,17 @@ public class SpamPostLimiterTracker implements TrackerInterface {
     private static Logger logger = LoggerFactory.getLogger(SpamPostLimiterTracker.class);
 
     private double lastPostLoadAverageLimit = Double.MAX_VALUE;
+    private boolean limitPreviewMode = false;
     private boolean logoutSpammingUser = true;
     private boolean lockSpammingUserAccount = true;
     private String spamNotificationEmail = null;
 
     public void setLastPostLoadAverageLimit(double lastPostLoadAverageLimit) {
         this.lastPostLoadAverageLimit = lastPostLoadAverageLimit;
+    }
+
+    public void setLimitPreviewMode(boolean limitPreviewMode) {
+        this.limitPreviewMode = limitPreviewMode;
     }
 
     public boolean track(HttpServletRequest request, HttpServletResponse response, TrackingData trackingData) {
@@ -31,7 +36,12 @@ public class SpamPostLimiterTracker implements TrackerInterface {
             return true;
         }
 
-        if (request.getMethod().equalsIgnoreCase("post") && request.getRequestURI().startsWith("/cms/render/live")) {
+        String urlPrefix = "/cms/render/live";
+        if (limitPreviewMode) {
+            urlPrefix = "/cms/render";
+        }
+
+        if (request.getMethod().equalsIgnoreCase("post") && request.getRequestURI().startsWith(urlPrefix)) {
             Long lastPostMethodTime = trackingData.getLong("lastPostMethodTime");
             Double lastPostLoadAverage = trackingData.getDouble("lastPostLoadAverage");
             long now = System.currentTimeMillis();
@@ -60,9 +70,7 @@ public class SpamPostLimiterTracker implements TrackerInterface {
 
             }
 
-            if (request.getMethod().toLowerCase().equals("post")) {
-                trackingData.setLong("lastPostMethodTime", now);
-            }
+            trackingData.setLong("lastPostMethodTime", now);
         }
 
         request.setAttribute("alreadyCalculatedPostAverage", new Boolean(true));

@@ -18,7 +18,7 @@ public class TrackingData implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger logger = LoggerFactory.getLogger(TrackingData.class);
+    private transient static Logger logger = LoggerFactory.getLogger(TrackingData.class);
 
     private String storageID;
     private String clientID;
@@ -26,7 +26,7 @@ public class TrackingData implements Serializable, Cloneable {
     private String associatedUserIdentifier;
 
     private Map<String, List<String>> trackingMap = new HashMap<String, List<String>>();
-    private Map<String, TrackingDataPropertyDefinition> propertyDefinitions;
+    private Map<String, TrackingDataPropertyDefinition> propertyDefinitions = new HashMap<String, TrackingDataPropertyDefinition>();
 
     // @todo not yet implemented.
     private Map<String, List<String>> removedEntries = new HashMap<String, List<String>>();
@@ -179,6 +179,12 @@ public class TrackingData implements Serializable, Cloneable {
         if (stringList.contains(newValue)) {
             stringList.remove(newValue);
             // we remove the value because we want the latest value to always be inserted at the end of the list.
+        }
+        TrackingDataPropertyDefinition trackingDataPropertyDefinition = propertyDefinitions.get(mapKey);
+        if (trackingDataPropertyDefinition != null) {
+            while (stringList.size() >= trackingDataPropertyDefinition.getMaxValues()) {
+                stringList.remove(0);
+            }
         }
         stringList.add(newValue);
         trackingMap.put(mapKey, stringList);
