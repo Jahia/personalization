@@ -25,18 +25,14 @@ public class TrackingService {
 
     private JahiaUserManagerService jahiaUserManagerService;
 
-    private List<String> ignoredProperties = new ArrayList<String>();
+    private TrackingDataFactory trackingDataFactory;
 
     public void setJahiaUserManagerService(JahiaUserManagerService jahiaUserManagerService) {
         this.jahiaUserManagerService = jahiaUserManagerService;
     }
 
-    public void setIgnoredProperties(List<String> ignoredProperties) {
-        this.ignoredProperties = ignoredProperties;
-    }
-
-    public List<String> getIgnoredProperties() {
-        return ignoredProperties;
+    public void setTrackingDataFactory(TrackingDataFactory trackingDataFactory) {
+        this.trackingDataFactory = trackingDataFactory;
     }
 
     public TrackingData getByClientId(final String trackingClientId) {
@@ -52,7 +48,7 @@ public class TrackingService {
                         }
                         // @todo normally we should also now retrieve and merge user tracking data if it is associated.
 
-                        TrackingData trackingData = new TrackingData(trackingNode, ignoredProperties);
+                        TrackingData trackingData = trackingDataFactory.getTrackingData(trackingNode);
                         if (trackingData.getAssociatedUserKey() != null) {
                             TrackingData userTrackingData = getUserTrackingData(trackingData.getAssociatedUserKey());
                             if (userTrackingData != null) {
@@ -85,7 +81,7 @@ public class TrackingService {
                     } else {
                         targetTrackingNode = createTargetTrackingNode(session, newTrackingData);
                     }
-                    newTrackingData.toJCRNode(targetTrackingNode, ignoredProperties);
+                    trackingDataFactory.toJCRNode(newTrackingData, targetTrackingNode);
 
                     if (newTrackingData.getAssociatedUserKey() != null) {
                         final JahiaUser jahiaUser = jahiaUserManagerService.lookupUserByKey(newTrackingData.getAssociatedUserKey());
@@ -118,7 +114,7 @@ public class TrackingService {
                     JCRNodeWrapper userNode = session.getNode(userJCRPath);
                     if (userNode.hasNode("trackingData")) {
                         JCRNodeWrapper userTrackingDataNode = userNode.getNode("trackingData");
-                        TrackingData trackingData = new TrackingData(userTrackingDataNode, ignoredProperties);
+                        TrackingData trackingData = trackingDataFactory.getTrackingData(userTrackingDataNode);
                         return trackingData;
                     } else {
                         return null;
@@ -160,10 +156,10 @@ public class TrackingService {
             userTrackingDataNode = userNode.addNode("trackingData", "jnt:trackingData");
         } else {
             userTrackingDataNode = userNode.getNode("trackingData");
-            TrackingData existingUserTrackingData = new TrackingData(userTrackingDataNode, ignoredProperties);
+            TrackingData existingUserTrackingData = trackingDataFactory.getTrackingData(userTrackingDataNode);
             newTrackingData = existingUserTrackingData.merge(trackingData);
         }
-        newTrackingData.toJCRNode(userTrackingDataNode, ignoredProperties);
+        trackingDataFactory.toJCRNode(newTrackingData, userTrackingDataNode);
         return newTrackingData;
     }
 

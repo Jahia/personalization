@@ -19,6 +19,17 @@ public class UserPropertyChoicelistInitializer implements ModuleChoiceListInitia
     private transient static Logger logger = Logger.getLogger(UserPropertyChoicelistInitializer.class);
     private String key;
 
+    private Set<String> selectableProperties = new HashSet<String>();
+    private Set<String> hiddenProperties = new HashSet<String>();
+
+    public void setSelectableProperties(Set<String> selectableProperties) {
+        this.selectableProperties = selectableProperties;
+    }
+
+    public void setHiddenProperties(Set<String> hiddenProperties) {
+        this.hiddenProperties = hiddenProperties;
+    }
+
     public List<ChoiceListValue> getChoiceListValues(ExtendedPropertyDefinition epd, String param,
                                                      List<ChoiceListValue> values, Locale locale,
                                                      Map<String, Object> context) {
@@ -29,11 +40,19 @@ public class UserPropertyChoicelistInitializer implements ModuleChoiceListInitia
         if (node != null) {
             try {
                 JahiaUser jahiaUser = node.getSession().getUser();
-                List<ChoiceListValue> listValues = new ArrayList<ChoiceListValue>();
                 UserProperties userProperties = jahiaUser.getUserProperties();
                 Iterator<String> userPropertyNameIterator = userProperties.propertyNameIterator();
+                Set<String> userPropertyNames = new TreeSet<String>();
+                userPropertyNames.addAll(selectableProperties);
                 while (userPropertyNameIterator.hasNext()) {
                     String userPropertyName = userPropertyNameIterator.next();
+                    if (!hiddenProperties.contains(userPropertyName) &&
+                        !userPropertyNames.contains(userPropertyName)) {
+                        userPropertyNames.add(userPropertyName);
+                    }
+                }
+                List<ChoiceListValue> listValues = new ArrayList<ChoiceListValue>();
+                for (String userPropertyName : userPropertyNames) {
                     listValues.add(new ChoiceListValue(userPropertyName, null,
                             node.getSession().getValueFactory().createValue(userPropertyName)));
                 }

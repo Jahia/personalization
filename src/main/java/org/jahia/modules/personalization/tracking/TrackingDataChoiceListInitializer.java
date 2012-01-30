@@ -14,6 +14,7 @@ import java.util.*;
  */
 public class TrackingDataChoiceListInitializer implements ModuleChoiceListInitializer {
     private transient static Logger logger = Logger.getLogger(TrackingDataChoiceListInitializer.class);
+
     private String key;
 
     public List<ChoiceListValue> getChoiceListValues(ExtendedPropertyDefinition epd, String param,
@@ -27,7 +28,13 @@ public class TrackingDataChoiceListInitializer implements ModuleChoiceListInitia
             try {
                 TrackingData trackingData = TrackingHandlerInterceptor.getThreadLocalTrackingData();
                 if (trackingData != null) {
-                    Set<String> trackingDataPropertyNames = trackingData.getTrackingMap().keySet();
+                    Map<String, TrackingDataPropertyDefinition> propertyDefinitions = TrackingDataFactory.getInstance().getPropertyDefinitions();
+                    Set<String> trackingDataPropertyNames = new TreeSet<String>();
+                    if (propertyDefinitions != null && propertyDefinitions.size() > 0) {
+                        trackingDataPropertyNames.addAll(propertyDefinitions.keySet());
+                    }
+
+                    trackingDataPropertyNames.addAll(trackingData.getTrackingMap().keySet());
                     List<ChoiceListValue> listValues = new ArrayList<ChoiceListValue>();
                     for (String trackingDataPropertyName : trackingDataPropertyNames) {
                         listValues.add(new ChoiceListValue(trackingDataPropertyName, null,

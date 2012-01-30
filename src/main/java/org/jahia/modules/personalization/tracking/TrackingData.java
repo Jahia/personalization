@@ -26,6 +26,7 @@ public class TrackingData implements Serializable, Cloneable {
     private String associatedUserIdentifier;
 
     private Map<String, List<String>> trackingMap = new HashMap<String, List<String>>();
+    private Map<String, TrackingDataPropertyDefinition> propertyDefinitions;
 
     // @todo not yet implemented.
     private Map<String, List<String>> removedEntries = new HashMap<String, List<String>>();
@@ -37,7 +38,8 @@ public class TrackingData implements Serializable, Cloneable {
         return super.clone();
     }
 
-    public TrackingData(JCRNodeWrapper node, List<String> ignoredProperties) throws RepositoryException {
+    protected TrackingData(JCRNodeWrapper node, List<String> ignoredProperties, Map<String,TrackingDataPropertyDefinition> propertyDefinitions) throws RepositoryException {
+        this.propertyDefinitions = propertyDefinitions;
         storageID = node.getIdentifier();
         PropertyIterator propertyIterator = node.getProperties();
         while (propertyIterator.hasNext()) {
@@ -65,7 +67,7 @@ public class TrackingData implements Serializable, Cloneable {
         }
     }
 
-    public JCRNodeWrapper toJCRNode(JCRNodeWrapper node, List<String> ignoredProperties) throws RepositoryException {
+    protected JCRNodeWrapper toJCRNode(JCRNodeWrapper node, List<String> ignoredProperties) throws RepositoryException {
         node.setProperty("j:clientId", clientID);
         if (associatedUserKey != null) {
             node.setProperty("j:associatedUserKey", associatedUserKey);

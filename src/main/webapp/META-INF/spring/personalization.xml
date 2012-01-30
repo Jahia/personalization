@@ -23,6 +23,48 @@
 
     <bean class="org.jahia.modules.personalization.UserPropertyChoicelistInitializer">
         <property name="key" value="userProperties"/>
+        <property name="selectableProperties">
+            <set>
+                <value>j:firstName</value>
+                <value>j:lastName</value>
+                <value>j:gender</value>
+                <value>j:title</value>
+                <value>j:birthDate</value>
+                <value>j:organization</value>
+                <value>j:function</value>
+                <value>j:about</value>
+                <value>j:email</value>
+                <value>j:skypeID</value>
+                <value>j:twitterID</value>
+                <value>j:facebookID</value>
+                <value>j:linkedinID</value>
+                <value>j:picture</value>
+
+                <!-- Now some Facebook properties -->
+                <value>name</value>
+                <value>bio</value>
+                <value>education</value>
+                <value>hometown</value>
+                <value>interested_in</value>
+                <value>link</value>
+                <value>significant_other</value>
+                <value>political</value>
+                <value>religion</value>
+                <value>relationship_status</value>
+                <value>website</value>
+                <value>work</value>
+
+            </set>
+        </property>
+        <property name="hiddenProperties">
+            <set>
+                <value>j:accountLocked</value>
+                <value>j:password</value>
+                <value>j:external</value>
+                <value>j:externalSource</value>
+                <value>j:publicProperties</value>
+            </set>
+        </property>
     </bean>
 
     <bean class="org.jahia.modules.personalization.tracking.TrackingDataChoiceListInitializer">

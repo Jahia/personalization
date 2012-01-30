@@ -3,6 +3,7 @@
 <%@ page import="org.jahia.modules.personalization.tracking.TrackingData" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="org.jahia.modules.personalization.tracking.TrackingDataFactory" %>
 <%@ taglib prefix="jcr" uri="http://www.jahia.org/tags/jcr" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -41,7 +42,7 @@
     </c:choose>
     <%
         JCRNodeWrapper curNode = (JCRNodeWrapper) pageContext.findAttribute("curNode");
-        TrackingData trackingData = new TrackingData(curNode, new ArrayList<String>());
+        TrackingData trackingData = TrackingDataFactory.getInstance().getTrackingData(curNode);
 
         accumulatedTrackingData.accumulateForKey("browsers", trackingData.getTrackingMap().get("browser"));
         accumulatedTrackingData.accumulateForKey("operatingSystems", trackingData.getTrackingMap().get("operating-system"));

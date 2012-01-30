@@ -3,8 +3,18 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
-    <bean name="TrackingService" class="org.jahia.modules.personalization.tracking.TrackingService">
-        <property name="jahiaUserManagerService" ref="JahiaUserManagerService"/>
+    <bean name="TrackingDataFactory" class="org.jahia.modules.personalization.tracking.TrackingDataFactory">
+        <property name="propertyDefinitions">
+            <map>
+                <entry key="timeOnPage">
+                    <bean class="org.jahia.modules.personalization.tracking.TrackingDataPropertyDefinition">
+                        <property name="multivalued" value="true"/>
+                        <property name="timestamped" value="true"/>
+                        <property name="name" value="timeOnPage"/>
+                    </bean>
+                </entry>
+            </map>
+        </property>
         <property name="ignoredProperties">
             <list>
                 <value>jcr:.*</value>
@@ -12,6 +22,11 @@
                 <value>j:nodename</value>
             </list>
         </property>
+    </bean>
+
+    <bean name="TrackingService" class="org.jahia.modules.personalization.tracking.TrackingService">
+        <property name="jahiaUserManagerService" ref="JahiaUserManagerService"/>
+        <property name="trackingDataFactory" ref="TrackingDataFactory"/>
     </bean>
 
     <bean class="org.jahia.modules.personalization.tracking.TrackingHelper" factory-method="getInstance">
