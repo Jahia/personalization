@@ -171,16 +171,22 @@ public class TrackingData implements Serializable, Cloneable {
         }
     }
 
-    public synchronized void addStringToSet(String mapKey, String newValue) {
+    public synchronized void addValue(String mapKey, String newValue) {
         List<String> stringList = trackingMap.get(mapKey);
         if (stringList == null) {
             stringList = new ArrayList<String>();
+        }
+        TrackingDataPropertyDefinition trackingDataPropertyDefinition = propertyDefinitions.get(mapKey);
+        if (trackingDataPropertyDefinition != null) {
+            if (trackingDataPropertyDefinition.isCounter()) {
+                setLong(mapKey, getLong(mapKey) + 1);
+                return;
+            }
         }
         if (stringList.contains(newValue)) {
             stringList.remove(newValue);
             // we remove the value because we want the latest value to always be inserted at the end of the list.
         }
-        TrackingDataPropertyDefinition trackingDataPropertyDefinition = propertyDefinitions.get(mapKey);
         if (trackingDataPropertyDefinition != null) {
             while (stringList.size() >= trackingDataPropertyDefinition.getMaxValues()) {
                 stringList.remove(0);

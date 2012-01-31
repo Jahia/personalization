@@ -23,7 +23,7 @@ public class LocalesTracker implements TrackerInterface {
         // now we reserve the list so the preferred locale is the last one, which is how tracking data works.
         Collections.reverse(localeList);
         for (Locale locale : localeList) {
-            trackingData.addStringToSet("locales", locale.toString());
+            trackingData.addValue("locales", locale.toString());
         }
         return true;
     }

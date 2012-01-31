@@ -13,7 +13,7 @@ public class OperatingSystemTracker implements TrackerInterface {
     public boolean track(HttpServletRequest request, HttpServletResponse response, TrackingData trackingData) {
         if (request.getHeader("User-Agent") != null) {
             UserAgent userAgent = UserAgent.parseUserAgentString(request.getHeader("User-Agent"));
-            trackingData.addStringToSet("operating-system", userAgent.getOperatingSystem().getName());
+            trackingData.addValue("operating-system", userAgent.getOperatingSystem().getName());
         }
         return true;
     }

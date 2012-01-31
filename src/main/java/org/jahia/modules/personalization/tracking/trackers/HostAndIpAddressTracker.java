@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class HostAndIpAddressTracker implements TrackerInterface {
     public boolean track(HttpServletRequest request, HttpServletResponse response, TrackingData trackingData) {
-        trackingData.addStringToSet("ips", request.getRemoteAddr());
-        trackingData.addStringToSet("hosts", request.getRemoteHost());
+        trackingData.addValue("ips", request.getRemoteAddr());
+        trackingData.addValue("hosts", request.getRemoteHost());
         return true;
     }
 }

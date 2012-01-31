@@ -16,7 +16,6 @@
       <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-1.1.css" type="text/css"/>
       <link rel="stylesheet" href="${pageContext.request.contextPath}/modules/personalization/css/personalization.css" media="screen" type="text/css" />
   </head>
-<body>
 <body class="login" onLoad="if (history.length > 1) { document.getElementById('backLink').style.display=''; }">
     <div id="adminLogin">
     <h2 class="loginlogo"></h2>

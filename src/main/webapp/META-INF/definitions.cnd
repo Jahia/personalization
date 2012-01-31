@@ -127,3 +127,6 @@
 [jnt:ajaxHTML5LocationTracker] > jnt:content, jmix:personalizationComponents
 
 [jnt:ajaxTimeOnPageTracker] > jnt:content, jmix:personalizationComponents
+
+[jnt:ajaxIncrementTrackingProperty] > jnt:content, jmix:personalizationComponents
+ - j:propertyName (string)

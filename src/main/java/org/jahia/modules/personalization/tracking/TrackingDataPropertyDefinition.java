@@ -10,6 +10,7 @@ public class TrackingDataPropertyDefinition implements Serializable, Cloneable {
     private String name;
     private boolean timestamped = false;
     private boolean multivalued = true;
+    private boolean counter = false;
     private long maxValues = 100;
 
     public String getName() {
@@ -42,5 +43,13 @@ public class TrackingDataPropertyDefinition implements Serializable, Cloneable {
 
     public void setMaxValues(long maxValues) {
         this.maxValues = maxValues;
+    }
+
+    public boolean isCounter() {
+        return counter;
+    }
+
+    public void setCounter(boolean counter) {
+        this.counter = counter;
     }
 }

@@ -60,7 +60,17 @@ public class TrackingController extends JahiaController {
         Map<String,String[]> parameterMap = (Map<String,String[]>) request.getParameterMap();
         for (Map.Entry<String,String[]> parameterMapEntry : parameterMap.entrySet()) {
             for (String parameterValue : parameterMapEntry.getValue()) {
-                trackingData.addStringToSet(parameterMapEntry.getKey(), parameterValue);
+                if (parameterValue.startsWith("+=")) {
+                    String incrementStr = parameterValue.substring("+=".length());
+                    long increment = Long.parseLong(incrementStr);
+                    Long previousValue = trackingData.getLong(parameterMapEntry.getKey());
+                    if (previousValue == null) {
+                        previousValue = 0L;
+                    }
+                    trackingData.setLong(parameterMapEntry.getKey(), previousValue + increment);
+                } else {
+                    trackingData.addValue(parameterMapEntry.getKey(), parameterValue);
+                }
             }
         }
     }

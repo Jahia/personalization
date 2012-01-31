@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 public class UserAgentTracker implements TrackerInterface {
     public boolean track(HttpServletRequest request, HttpServletResponse response, TrackingData trackingData) {
         if (request.getHeader("User-Agent") != null) {
-            trackingData.addStringToSet("user-agents", request.getHeader("User-Agent"));
+            trackingData.addValue("user-agents", request.getHeader("User-Agent"));
         }
         return true;
     }

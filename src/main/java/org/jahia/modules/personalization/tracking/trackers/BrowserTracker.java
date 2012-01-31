@@ -13,8 +13,8 @@ public class BrowserTracker implements TrackerInterface {
     public boolean track(HttpServletRequest request, HttpServletResponse response, TrackingData trackingData) {
         if (request.getHeader("User-Agent") != null) {
             UserAgent userAgent = UserAgent.parseUserAgentString(request.getHeader("User-Agent"));
-            trackingData.addStringToSet("browser", userAgent.getBrowser().getName());
-            trackingData.addStringToSet("browser-version", userAgent.getBrowserVersion().getVersion());
+            trackingData.addValue("browser", userAgent.getBrowser().getName());
+            trackingData.addValue("browser-version", userAgent.getBrowserVersion().getVersion());
         }
         return true;
     }

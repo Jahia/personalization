@@ -18,7 +18,7 @@ public class UrlAndRefererTracker implements TrackerInterface {
         if (request.getHeader("Referer") != null) {
             fullUrl.append("::" + request.getHeader("Referer"));
         }
-        trackingData.addStringToSet("urls", fullUrl.toString());
+        trackingData.addValue("urls", fullUrl.toString());
         return true;
     }
 }
