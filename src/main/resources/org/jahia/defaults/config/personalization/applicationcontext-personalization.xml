@@ -8,17 +8,19 @@
             <map>
                 <entry key="timeOnPage">
                     <bean class="org.jahia.modules.personalization.tracking.TrackingDataPropertyDefinition">
+                        <property name="name" value="timeOnPage"/>
+                        <property name="type" value="STRING" />
                         <property name="multivalued" value="true"/>
                         <property name="timestamped" value="true"/>
-                        <property name="name" value="timeOnPage"/>
                         <property name="maxValues" value="10" />
                     </bean>
                 </entry>
                 <entry key="urls">
                     <bean class="org.jahia.modules.personalization.tracking.TrackingDataPropertyDefinition">
+                        <property name="name" value="urls"/>
+                        <property name="type" value="STRING" />
                         <property name="multivalued" value="true"/>
                         <property name="timestamped" value="true"/>
-                        <property name="name" value="urls"/>
                         <property name="maxValues" value="10" />
                     </bean>
                 </entry>

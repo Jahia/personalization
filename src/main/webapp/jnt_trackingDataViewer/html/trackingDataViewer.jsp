@@ -417,7 +417,9 @@
 <script type="text/javascript">
     $(document).ready(function() {
         $('#toppanel').appendTo(document.body);
-        initLocationMap();
+        if (typeof window.initLocationMap == 'function') {
+            initLocationMap();
+        }
     });
 </script>
 </c:otherwise>

@@ -7,10 +7,14 @@ import java.io.Serializable;
  */
 public class TrackingDataPropertyDefinition implements Serializable, Cloneable {
 
+    public enum PropertyTypes {
+        STRING, LONG, COUNTER, DATETIME, TIMESTAMPED_STRING, STRING_COUNTER
+    }
+
     private String name;
     private boolean timestamped = false;
     private boolean multivalued = true;
-    private boolean counter = false;
+    private PropertyTypes type = PropertyTypes.STRING; // allowed types are : string,long,counter,datetime
     private long maxValues = 100;
 
     public String getName() {
@@ -45,11 +49,15 @@ public class TrackingDataPropertyDefinition implements Serializable, Cloneable {
         this.maxValues = maxValues;
     }
 
-    public boolean isCounter() {
-        return counter;
+    public PropertyTypes getType() {
+        return type;
     }
 
-    public void setCounter(boolean counter) {
-        this.counter = counter;
+    public void setType(PropertyTypes type) {
+        this.type = type;
+    }
+
+    public void setType(String type) {
+        this.type = PropertyTypes.valueOf(type);
     }
 }

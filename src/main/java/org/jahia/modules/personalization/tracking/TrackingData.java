@@ -178,7 +178,7 @@ public class TrackingData implements Serializable, Cloneable {
         }
         TrackingDataPropertyDefinition trackingDataPropertyDefinition = propertyDefinitions.get(mapKey);
         if (trackingDataPropertyDefinition != null) {
-            if (trackingDataPropertyDefinition.isCounter()) {
+            if (trackingDataPropertyDefinition.getType() == TrackingDataPropertyDefinition.PropertyTypes.COUNTER) {
                 setLong(mapKey, getLong(mapKey) + 1);
                 return;
             }
