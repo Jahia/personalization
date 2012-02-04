@@ -95,7 +95,7 @@
  - j:propertyName (string, choicelist[trackingDataProperties])
 
 [jnt:googleReverseGeoCodeLocationExpression] > jnt:expression, jmix:personalizationComponents
- - j:addressComponent (string) < 'street_number','route','locality','country','postal_code'
+ - j:addressComponent (string,choicelist[resourceBundle]) < 'street_number','route','locality','country','postal_code'
 + location (jnt:expression)
 
 // Conditional constructs
