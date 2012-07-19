@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     This file is part of Jahia, next-generation open source CMS:
-    Jahia's next-generation, open source CMS stems from a widely acknowledged vision 
-    of enterprise application convergence - web, search, document, social and portal - 
-    unified by the simplicity of web content management. 
+    Jahia's next-generation, open source CMS stems from a widely acknowledged vision
+    of enterprise application convergence - web, search, document, social and portal -
+    unified by the simplicity of web content management.
 
     For more information, please visit http://www.jahia.com.
 
@@ -30,12 +30,12 @@
     describing the FLOSS exception, and it is also available here:
     http://www.jahia.com/license
 
-    Commercial and Supported Versions of the program (dual licensing): 
+    Commercial and Supported Versions of the program (dual licensing):
     alternatively, commercial and supported versions of the program may be used
-    in accordance with the terms and conditions contained in a separate 
+    in accordance with the terms and conditions contained in a separate
     written agreement between you and Jahia Solutions Group SA.
-    
-    If you are unsure which license is appropriate for your use, 
+
+    If you are unsure which license is appropriate for your use,
     please contact the sales department at sales@jahia.com.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -187,18 +187,6 @@
     </profiles>
     <dependencies>
         <dependency>
-            <groupId>org.jahia.server</groupId>
-            <artifactId>jahia-impl</artifactId>
-            <version>6.6.0.0-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jahia.server</groupId>
-            <artifactId>jahia-taglib</artifactId>
-            <version>6.6.0.0-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
            <groupId>net.sourceforge.wurfl</groupId>
            <artifactId>wurfl</artifactId>
            <version>1.3.1.1</version>
@@ -222,6 +210,14 @@
                <exclusion>
                    <groupId>org.springframework</groupId>
                    <artifactId>spring-web</artifactId>
+               </exclusion>
+               <exclusion>
+                   <groupId>commons-collections</groupId>
+                   <artifactId>commons-collections</artifactId>
+               </exclusion>
+               <exclusion>
+                   <groupId>commons-lang</groupId>
+                   <artifactId>commons-lang</artifactId>
                </exclusion>
            </exclusions>
         </dependency>
